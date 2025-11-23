@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryo Build Lab - Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            arctic: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .diagonal-stripes {
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.02) 10px,
+        rgba(255, 255, 255, 0.02) 20px
+      );
+    }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hover-glow {
+      transition: all 0.3s ease;
+    }
+
+    .hover-glow:hover {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .nav-level {
+      transition: all 0.3s ease;
+    }
+
+    .nav-level.hidden {
+      opacity: 0;
+      transform: translateX(20px);
+      display: none;
+    }
+
+    .breadcrumb-item {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .breadcrumb-item:hover {
+      color: #60a5fa;
+    }
+
+    .card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .filter-btn.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #60a5fa;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pagination-btn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #60a5fa;
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .pagination-btn.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-color: rgba(59, 130, 246, 0.6);
+      color: #60a5fa;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 overflow-hidden h-screen">
+  <!-- Main Container -->
+  <div class="h-screen flex flex-col">
+    <!-- Top Bar -->
+    <header class="h-16 glass border-b border-slate-700/50 flex items-center justify-between px-6 diagonal-stripes">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center hover-glow cursor-pointer">
+          <span class="material-symbols-outlined text-white text-xl">workspaces</span>
+        </div>
+        <h1 class="text-xl font-bold gradient-text">Cryo Build Lab</h1>
+        <div class="h-6 w-px bg-slate-700"></div>
+        <div class="text-sm text-slate-400">v8.0</div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="flex items-center gap-3">
+        <a href="../core-framework-v7/public-gallery.html" class="px-4 py-2 rounded-lg glass hover:bg-blue-500/20 flex items-center gap-2 transition-colors text-sm font-medium">
+          <span class="material-symbols-outlined">apps</span>
+          <span>Gallery</span>
+        </a>
+        <button id="searchToggle" class="w-10 h-10 rounded-lg glass hover:bg-slate-700/50 flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined">search</span>
+        </button>
+        <button id="filterToggle" class="w-10 h-10 rounded-lg glass hover:bg-slate-700/50 flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined">filter_list</span>
+        </button>
+        <button class="w-10 h-10 rounded-lg glass hover:bg-slate-700/50 flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <button class="w-10 h-10 rounded-lg glass hover:bg-slate-700/50 flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined">account_circle</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="flex-1 overflow-hidden flex">
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto p-8 grid-bg">
+        <div class="max-w-7xl mx-auto">
+          <!-- Search Bar (Hidden by default) -->
+          <div id="searchBar" class="mb-6 hidden">
+            <div class="relative">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                search
+              </span>
+              <input
+                id="searchInput"
+                type="text"
+                placeholder="Search organizations, projects, or workspaces..."
+                class="w-full pl-12 pr-4 py-3 glass rounded-xl text-white placeholder-slate-400 transition-all focus:outline-none focus:border-blue-500"
+              >
+            </div>
+          </div>
+
+          <!-- Filters Panel (Hidden by default) -->
+          <div id="filtersPanel" class="mb-6 glass rounded-xl p-4 hidden">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Filters</h3>
+              <button id="clearFilters" class="text-xs text-blue-400 hover:text-blue-300 transition-colors">Clear All</button>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="mb-4">
+              <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-2">Category</label>
+              <div class="flex flex-wrap gap-2">
+                <button class="filter-btn category-filter active" data-category="all">All</button>
+                <button class="filter-btn category-filter" data-category="rendering">Rendering</button>
+                <button class="filter-btn category-filter" data-category="tools">Tools</button>
+                <button class="filter-btn category-filter" data-category="platform">Platform</button>
+                <button class="filter-btn category-filter" data-category="demo">Demo Apps</button>
+              </div>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="mb-4">
+              <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-2">Status</label>
+              <div class="flex flex-wrap gap-2">
+                <button class="filter-btn status-filter active" data-status="all">All</button>
+                <button class="filter-btn status-filter" data-status="active">Active</button>
+                <button class="filter-btn status-filter" data-status="development">Development</button>
+                <button class="filter-btn status-filter" data-status="archived">Archived</button>
+              </div>
+            </div>
+
+            <!-- Sort Options -->
+            <div>
+              <label class="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-2">Sort By</label>
+              <select id="sortSelect" class="w-full glass px-4 py-2 rounded-lg text-sm cursor-pointer focus:outline-none focus:border-blue-500">
+                <option value="name">Name (A-Z)</option>
+                <option value="recent">Recently Updated</option>
+                <option value="projects">Most Projects</option>
+                <option value="workspaces">Most Workspaces</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Breadcrumb Navigation -->
+          <div id="breadcrumb" class="flex items-center gap-2 text-sm mb-8">
+            <span class="breadcrumb-item text-blue-400 font-medium" onclick="showLevel('organizations')">Organizations</span>
+          </div>
+
+          <!-- Level 1: Organizations -->
+          <div id="level-organizations" class="nav-level fade-in">
+            <div class="mb-8">
+              <h2 class="text-3xl font-bold mb-2">Select an Organization</h2>
+              <p class="text-slate-400">Choose your organization to view projects</p>
+            </div>
+
+            <div id="organizations-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Arctic Engine Org -->
+              <div class="card glass rounded-xl p-6 border border-slate-700/50" onclick="selectOrganization('arctic-engine', 'Arctic Engine')" data-category="rendering" data-status="active" data-name="Arctic Engine">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-3xl">api</span>
+                  </div>
+                  <span class="material-symbols-outlined text-blue-400">arrow_forward</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Arctic Engine</h3>
+                <p class="text-sm text-slate-400 mb-4">Core rendering engine and tooling ecosystem</p>
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                  <span>12 Projects</span>
+                  <span>•</span>
+                  <span>Active</span>
+                </div>
+              </div>
+
+              <!-- Cryo Platform Org -->
+              <div class="card glass rounded-xl p-6 border border-slate-700/50" onclick="selectOrganization('cryo-platform', 'Cryo Platform')" data-category="platform" data-status="active" data-name="Cryo Platform">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-3xl">cloud</span>
+                  </div>
+                  <span class="material-symbols-outlined text-purple-400">arrow_forward</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Cryo Platform</h3>
+                <p class="text-sm text-slate-400 mb-4">Cloud-native game development platform</p>
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                  <span>8 Projects</span>
+                  <span>•</span>
+                  <span>Active</span>
+                </div>
+              </div>
+
+              <!-- Demo Apps Org -->
+              <div class="card glass rounded-xl p-6 border border-slate-700/50" onclick="selectOrganization('demo-apps', 'Demo Applications')" data-category="demo" data-status="active" data-name="Demo Applications">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-3xl">apps</span>
+                  </div>
+                  <span class="material-symbols-outlined text-green-400">arrow_forward</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Demo Applications</h3>
+                <p class="text-sm text-slate-400 mb-4">Example applications and showcases</p>
+                <div class="flex items-center gap-4 text-xs text-slate-500">
+                  <span>10 Projects</span>
+                  <span>•</span>
+                  <span>7 Available • 3 Coming Soon</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination for Organizations -->
+            <div id="organizations-pagination" class="pagination mt-8">
+              <button class="pagination-btn" onclick="changePage('organizations', 'prev')">
+                <span class="material-symbols-outlined" style="font-size: 16px;">chevron_left</span>
+              </button>
+              <span class="text-sm text-slate-400">
+                Page <span id="organizations-current-page" class="text-blue-400 font-medium">1</span> of <span id="organizations-total-pages" class="text-slate-300">1</span>
+              </span>
+              <button class="pagination-btn" onclick="changePage('organizations', 'next')">
+                <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Level 2: Projects (Hidden by default) -->
+          <div id="level-projects" class="nav-level hidden">
+            <div class="mb-8">
+              <h2 class="text-3xl font-bold mb-2">Select a Project</h2>
+              <p class="text-slate-400">Choose a project to view workspaces</p>
+            </div>
+
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Projects will be dynamically inserted here -->
+            </div>
+
+            <!-- Pagination for Projects -->
+            <div id="projects-pagination" class="pagination mt-8">
+              <button class="pagination-btn" onclick="changePage('projects', 'prev')">
+                <span class="material-symbols-outlined" style="font-size: 16px;">chevron_left</span>
+              </button>
+              <span class="text-sm text-slate-400">
+                Page <span id="projects-current-page" class="text-blue-400 font-medium">1</span> of <span id="projects-total-pages" class="text-slate-300">1</span>
+              </span>
+              <button class="pagination-btn" onclick="changePage('projects', 'next')">
+                <span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Level 3: Workspaces (Hidden by default) -->
+          <div id="level-workspaces" class="nav-level hidden">
+            <div class="mb-8">
+              <h2 class="text-3xl font-bold mb-2">Select a Cryo Deck</h2>
+              <p class="text-slate-400">Open a workspace to start working</p>
+            </div>
+
+            <div id="workspaces-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Workspaces will be dynamically inserted here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Status Bar -->
+    <footer class="h-10 glass border-t border-slate-700/50 flex items-center justify-between px-6 text-xs diagonal-stripes">
+      <div class="flex items-center gap-4">
+        <span class="text-slate-500">Arctic Engine <span class="text-blue-400 font-medium">v8.0</span></span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-slate-500">Server: <span class="text-green-400 font-medium">Healthy</span></span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ============================================
+    // Data Structure
+    // ============================================
+
+    const organizations = {
+      'arctic-engine': {
+        name: 'Arctic Engine',
+        icon: 'api',
+        color: 'blue',
+        projects: {
+          'core-renderer': {
+            name: 'Core Renderer',
+            description: 'Vulkan-based PBR renderer',
+            icon: 'view_in_ar',
+            color: 'blue',
+            workspaces: [
+              { id: 'scene-editor', name: '3D Scene Editor', description: 'Edit 3D scenes with GLTF support', icon: 'view_in_ar' },
+              { id: 'material-editor', name: 'Material Editor', description: 'Edit PBR materials and shaders', icon: 'gradient' },
+              { id: 'shader-graph', name: 'Shader Graph', description: 'Visual shader editor', icon: 'blur_on' }
+            ]
+          },
+          'cryo-studio': {
+            name: 'Cryo Studio',
+            description: 'Integrated development environment',
+            icon: 'code',
+            color: 'purple',
+            workspaces: [
+              { id: 'asset-manager', name: 'Asset Manager', description: 'Manage game assets', icon: 'folder' },
+              { id: 'build-lab', name: 'Build Lab', description: 'Build and package tools', icon: 'build' }
+            ]
+          },
+          'tooling': {
+            name: 'Tooling',
+            description: 'CLI and automation tools',
+            icon: 'build',
+            color: 'orange',
+            workspaces: [
+              { id: 'asset-baker', name: 'Asset Baker', description: 'Optimize assets for deployment', icon: 'compress' },
+              { id: 'pak-tool', name: 'PAK Tool', description: 'Package management', icon: 'archive' }
+            ]
+          }
+        }
+      },
+      'cryo-platform': {
+        name: 'Cryo Platform',
+        icon: 'cloud',
+        color: 'purple',
+        projects: {
+          'game-server': {
+            name: 'Game Server',
+            description: 'Multiplayer game server',
+            icon: 'dns',
+            color: 'purple',
+            workspaces: [
+              { id: 'entity-system', name: 'Entity System', description: 'ECS configuration', icon: 'account_tree' },
+              { id: 'network-config', name: 'Network Config', description: 'Server configuration', icon: 'settings_ethernet' }
+            ]
+          },
+          'broadcast-server': {
+            name: 'Broadcast Server',
+            description: 'Streaming and broadcast',
+            icon: 'broadcast_on_personal',
+            color: 'pink',
+            workspaces: [
+              { id: 'stream-config', name: 'Stream Config', description: 'Configure streaming', icon: 'videocam' }
+            ]
+          }
+        }
+      },
+      'demo-apps': {
+        name: 'Demo Applications',
+        icon: 'apps',
+        color: 'green',
+        projects: {
+          'dating-app': {
+            name: 'Dating App - LoveMatch',
+            description: 'Complete dating app workspace (4-level navigation)',
+            icon: 'favorite',
+            color: 'pink',
+            workspaces: [
+              { id: 'dating-dashboard', name: 'Dating Dashboard', description: 'User profiles, matches, and activity', icon: 'dashboard', available: true },
+              { id: 'user-profiles', name: 'User Profiles', description: 'Browse and manage user profiles', icon: 'person', available: true },
+              { id: 'matching', name: 'Match Algorithm', description: 'Compatibility matching system', icon: 'people', available: true },
+              { id: 'messaging', name: 'Message Threads', description: 'Real-time chat interface', icon: 'chat', available: true }
+            ]
+          },
+          'puzzle-game': {
+            name: 'Puzzle Game - Puzzle Master',
+            description: 'Game development workspace (3-level navigation)',
+            icon: 'sports_esports',
+            color: 'purple',
+            workspaces: [
+              { id: 'game-dashboard', name: 'Game Dashboard', description: 'Level browser and player stats', icon: 'dashboard', available: true },
+              { id: 'level-editor', name: 'Level Editor', description: 'Create and edit puzzle levels', icon: 'grid_on', available: true },
+              { id: 'player-stats', name: 'Player Analytics', description: 'View player statistics and progress', icon: 'analytics', available: true }
+            ]
+          },
+          'ecommerce': {
+            name: 'E-Commerce - ShopMaster',
+            description: 'Online store management workspace',
+            icon: 'shopping_cart',
+            color: 'green',
+            workspaces: [
+              { id: 'shop-dashboard', name: 'Shop Dashboard', description: 'Products, customers, and sales', icon: 'dashboard', available: true },
+              { id: 'products', name: 'Product Manager', description: 'Manage product catalog', icon: 'inventory', available: true },
+              { id: 'orders', name: 'Order Manager', description: 'Process and track orders', icon: 'receipt', available: true },
+              { id: 'customers', name: 'Customer Manager', description: 'Customer relationship management', icon: 'groups', available: true }
+            ]
+          },
+          'shader-editor': {
+            name: 'Shader Editor - ShaderLab',
+            description: 'Visual shader graph and material editor',
+            icon: 'code',
+            color: 'blue',
+            workspaces: [
+              { id: 'shader-browser', name: 'Shader Browser', description: 'Browse and manage shaders', icon: 'blur_on', available: true },
+              { id: 'shader-graph', name: 'Shader Graph Editor', description: 'Node-based shader creation', icon: 'account_tree', available: true },
+              { id: 'material-editor', name: 'Material Inspector', description: 'Edit PBR material properties', icon: 'gradient', available: true }
+            ]
+          },
+          '3d-scene': {
+            name: '3D Scene - SceneMaster',
+            description: '3D scene editor with entity hierarchy',
+            icon: 'view_in_ar',
+            color: 'orange',
+            workspaces: [
+              { id: 'scene-browser', name: 'Scene Browser', description: 'Browse and load 3D scenes', icon: 'folder_open', available: true },
+              { id: 'scene-editor', name: 'Scene Hierarchy', description: 'Edit entity hierarchy', icon: 'account_tree', available: true },
+              { id: 'entity-inspector', name: 'Entity Inspector', description: 'Inspect entity components', icon: 'info', available: true },
+              { id: 'gltf-viewer', name: 'GLTF Viewer', description: 'Preview GLTF models', icon: 'view_in_ar', available: true }
+            ]
+          },
+          'asset-manager': {
+            name: 'Asset Manager - AssetHub',
+            description: 'File browser and asset management',
+            icon: 'folder',
+            color: 'yellow',
+            workspaces: [
+              { id: 'file-browser', name: 'File Browser', description: 'Browse project files', icon: 'folder', available: true },
+              { id: 'asset-preview', name: 'Asset Preview', description: 'Preview assets and metadata', icon: 'preview', available: true },
+              { id: 'import-wizard', name: 'Import Wizard', description: 'Import external assets', icon: 'upload', available: true }
+            ]
+          },
+          'analytics': {
+            name: 'Analytics - DataHub',
+            description: 'Data visualization and reporting',
+            icon: 'analytics',
+            color: 'cyan',
+            workspaces: [
+              { id: 'dashboard-browser', name: 'Dashboard Browser', description: 'Browse analytics dashboards', icon: 'dashboard', available: true },
+              { id: 'chart-editor', name: 'Chart Editor', description: 'Create custom charts', icon: 'bar_chart', available: true },
+              { id: 'metrics-overview', name: 'Metrics Overview', description: 'View key performance metrics', icon: 'insights', available: true }
+            ]
+          },
+          'workflow-editor': {
+            name: 'Workflow Editor',
+            description: 'Visual workflow automation (Coming Soon)',
+            icon: 'workflow',
+            color: 'indigo',
+            workspaces: [
+              { id: 'workflow-builder', name: 'Workflow Builder', description: 'Build automation workflows', icon: 'account_tree', available: false },
+              { id: 'task-scheduler', name: 'Task Scheduler', description: 'Schedule automated tasks', icon: 'schedule', available: false }
+            ]
+          },
+          'api-designer': {
+            name: 'API Designer',
+            description: 'REST API design and testing (Coming Soon)',
+            icon: 'api',
+            color: 'teal',
+            workspaces: [
+              { id: 'endpoint-designer', name: 'Endpoint Designer', description: 'Design API endpoints', icon: 'settings_ethernet', available: false },
+              { id: 'api-tester', name: 'API Tester', description: 'Test API requests', icon: 'bug_report', available: false }
+            ]
+          },
+          'cms': {
+            name: 'Content Management',
+            description: 'CMS workspace (Coming Soon)',
+            icon: 'article',
+            color: 'amber',
+            workspaces: [
+              { id: 'content-editor', name: 'Content Editor', description: 'Edit website content', icon: 'edit', available: false },
+              { id: 'media-library', name: 'Media Library', description: 'Manage media files', icon: 'perm_media', available: false }
+            ]
+          }
+        }
+      }
+    };
+
+    // ============================================
+    // Navigation State
+    // ============================================
+
+    let currentOrg = null;
+    let currentProject = null;
+
+    // ============================================
+    // Navigation Functions
+    // ============================================
+
+    function showLevel(level) {
+      // Hide all levels
+      document.querySelectorAll('.nav-level').forEach(el => {
+        el.classList.add('hidden');
+      });
+
+      // Show selected level
+      const levelEl = document.getElementById(`level-${level}`);
+      if (levelEl) {
+        levelEl.classList.remove('hidden');
+      }
+
+      // Update breadcrumb based on level
+      const breadcrumb = document.getElementById('breadcrumb');
+      if (level === 'organizations') {
+        breadcrumb.innerHTML = '<span class="breadcrumb-item text-blue-400 font-medium" onclick="showLevel(\'organizations\')">Organizations</span>';
+        currentOrg = null;
+        currentProject = null;
+      }
+    }
+
+    function selectOrganization(orgId, orgName) {
+      currentOrg = orgId;
+      const org = organizations[orgId];
+
+      // Update breadcrumb
+      const breadcrumb = document.getElementById('breadcrumb');
+      breadcrumb.innerHTML = `
+        <span class="breadcrumb-item text-slate-400" onclick="showLevel('organizations')">Organizations</span>
+        <span class="material-symbols-outlined text-xs text-slate-600">chevron_right</span>
+        <span class="breadcrumb-item text-blue-400 font-medium">${orgName}</span>
+      `;
+
+      // Populate projects grid
+      const projectsGrid = document.getElementById('projects-grid');
+      projectsGrid.innerHTML = '';
+
+      Object.entries(org.projects).forEach(([projectId, project]) => {
+        const colorClasses = {
+          blue: 'from-blue-500 to-blue-600 text-blue-400',
+          purple: 'from-purple-500 to-purple-600 text-purple-400',
+          orange: 'from-orange-500 to-orange-600 text-orange-400',
+          green: 'from-green-500 to-green-600 text-green-400',
+          pink: 'from-pink-500 to-pink-600 text-pink-400'
+        };
+
+        const color = colorClasses[project.color] || colorClasses.blue;
+        const [gradientFrom, gradientTo, textColor] = color.split(' ');
+
+        projectsGrid.innerHTML += `
+          <div class="card glass rounded-xl p-6 border border-slate-700/50" onclick="selectProject('${projectId}', '${project.name}')">
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-16 h-16 rounded-xl bg-gradient-to-br ${gradientFrom} ${gradientTo} flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-3xl">${project.icon}</span>
+              </div>
+              <span class="material-symbols-outlined ${textColor}">arrow_forward</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">${project.name}</h3>
+            <p class="text-sm text-slate-400 mb-4">${project.description}</p>
+            <div class="flex items-center gap-4 text-xs text-slate-500">
+              <span>${project.workspaces.length} Workspaces</span>
+            </div>
+          </div>
+        `;
+      });
+
+      // Show projects level
+      showLevel('projects');
+    }
+
+    function selectProject(projectId, projectName) {
+      currentProject = projectId;
+      const org = organizations[currentOrg];
+      const project = org.projects[projectId];
+
+      // Update breadcrumb
+      const breadcrumb = document.getElementById('breadcrumb');
+      breadcrumb.innerHTML = `
+        <span class="breadcrumb-item text-slate-400" onclick="showLevel('organizations')">Organizations</span>
+        <span class="material-symbols-outlined text-xs text-slate-600">chevron_right</span>
+        <span class="breadcrumb-item text-slate-400" onclick="selectOrganization('${currentOrg}', '${org.name}')">${org.name}</span>
+        <span class="material-symbols-outlined text-xs text-slate-600">chevron_right</span>
+        <span class="breadcrumb-item text-blue-400 font-medium">${projectName}</span>
+      `;
+
+      // Populate workspaces grid
+      const workspacesGrid = document.getElementById('workspaces-grid');
+      workspacesGrid.innerHTML = '';
+
+      project.workspaces.forEach(workspace => {
+        const availableBadge = workspace.available
+          ? '<span class="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded border border-green-500/20">Available</span>'
+          : '<span class="text-xs px-2 py-1 bg-orange-500/10 text-orange-400 rounded border border-orange-500/20">Coming Soon</span>';
+
+        const clickHandler = workspace.available
+          ? `onclick="openWorkspace('${workspace.id}')"`
+          : `onclick="alert('This workspace is coming soon!')" style="cursor: not-allowed; opacity: 0.6;"`;
+
+        workspacesGrid.innerHTML += `
+          <div class="card glass rounded-xl p-6 border border-slate-700/50" ${clickHandler}>
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-3xl">${workspace.icon}</span>
+              </div>
+              <span class="material-symbols-outlined text-blue-400">${workspace.available ? 'open_in_new' : 'lock'}</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">${workspace.name}</h3>
+            <p class="text-sm text-slate-400 mb-4">${workspace.description}</p>
+            <div class="flex gap-2">
+              ${availableBadge}
+            </div>
+          </div>
+        `;
+      });
+
+      // Show workspaces level
+      showLevel('workspaces');
+    }
+
+    function openWorkspace(workspaceId) {
+      console.log('Opening workspace:', workspaceId);
+
+      // Map workspace IDs to Core Framework v7 workspace files
+      const workspaceMap = {
+        // Dating App Workspaces (Pink)
+        'dating-dashboard': '../core-framework-v7/dating-app-workspace.html?mode=full',
+        'user-profiles': '../core-framework-v7/dating-app-workspace.html?mode=full',
+        'matching': '../core-framework-v7/dating-app-workspace.html?mode=full',
+        'messaging': '../core-framework-v7/dating-app-workspace.html?mode=full',
+
+        // Puzzle Game Workspaces (Purple)
+        'game-dashboard': '../core-framework-v7/game-workspace.html?mode=full',
+        'level-editor': '../core-framework-v7/game-workspace.html?mode=full',
+        'player-stats': '../core-framework-v7/game-workspace.html?mode=full',
+
+        // E-Commerce Workspaces (Green)
+        'shop-dashboard': '../core-framework-v7/ecommerce-workspace.html?mode=full',
+        'products': '../core-framework-v7/ecommerce-workspace.html?mode=full',
+        'orders': '../core-framework-v7/ecommerce-workspace.html?mode=full',
+        'customers': '../core-framework-v7/ecommerce-workspace.html?mode=full',
+
+        // Shader Editor Workspaces (Blue)
+        'shader-browser': '../core-framework-v7/shader-editor-workspace.html?mode=full',
+        'shader-graph': '../core-framework-v7/shader-editor-workspace.html?mode=full',
+        'material-editor': '../core-framework-v7/shader-editor-workspace.html?mode=full',
+
+        // 3D Scene Workspaces (Orange)
+        'scene-browser': '../core-framework-v7/3d-scene-workspace.html?mode=full',
+        'scene-editor': '../core-framework-v7/3d-scene-workspace.html?mode=full',
+        'entity-inspector': '../core-framework-v7/3d-scene-workspace.html?mode=full',
+        'gltf-viewer': '../core-framework-v7/3d-scene-workspace.html?mode=full',
+
+        // Asset Manager Workspaces (Yellow)
+        'file-browser': '../core-framework-v7/asset-manager-workspace.html?mode=full',
+        'asset-preview': '../core-framework-v7/asset-manager-workspace.html?mode=full',
+        'import-wizard': '../core-framework-v7/asset-manager-workspace.html?mode=full',
+
+        // Analytics Workspaces (Cyan)
+        'dashboard-browser': '../core-framework-v7/analytics-workspace.html?mode=full',
+        'chart-editor': '../core-framework-v7/analytics-workspace.html?mode=full',
+        'metrics-overview': '../core-framework-v7/analytics-workspace.html?mode=full',
+
+        // Legacy/Other Workspaces
+        'asset-manager': '../core-framework-v7/asset-manager-workspace.html?mode=full',
+        'build-lab': '../core-framework-v7/analytics-workspace.html?mode=full',
+        'entity-system': '../core-framework-v7/3d-scene-workspace.html?mode=full',
+        'network-config': '../core-framework-v7/analytics-workspace.html?mode=full',
+        'stream-config': '../core-framework-v7/analytics-workspace.html?mode=full'
+      };
+
+      const workspaceUrl = workspaceMap[workspaceId];
+      if (workspaceUrl) {
+        window.open(workspaceUrl, '_blank');
+      } else {
+        alert(`Opening workspace: ${workspaceId}\n\nThis workspace demo is coming soon!`);
+      }
+    }
+
+    // ============================================
+    // Search, Filter, and Pagination
+    // ============================================
+
+    const ITEMS_PER_PAGE = 6;
+    let currentPages = {
+      organizations: 1,
+      projects: 1,
+      workspaces: 1
+    };
+    let activeFilters = {
+      search: '',
+      category: 'all',
+      status: 'all',
+      sort: 'name'
+    };
+
+    // Toggle search bar
+    document.getElementById('searchToggle').addEventListener('click', () => {
+      const searchBar = document.getElementById('searchBar');
+      searchBar.classList.toggle('hidden');
+      if (!searchBar.classList.contains('hidden')) {
+        document.getElementById('searchInput').focus();
+      }
+    });
+
+    // Toggle filters panel
+    document.getElementById('filterToggle').addEventListener('click', () => {
+      document.getElementById('filtersPanel').classList.toggle('hidden');
+    });
+
+    // Search input
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      activeFilters.search = e.target.value.toLowerCase();
+      applyFiltersToCurrentLevel();
+    });
+
+    // Category filters
+    document.querySelectorAll('.category-filter').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        activeFilters.category = e.target.dataset.category;
+        applyFiltersToCurrentLevel();
+      });
+    });
+
+    // Status filters
+    document.querySelectorAll('.status-filter').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.status-filter').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        activeFilters.status = e.target.dataset.status;
+        applyFiltersToCurrentLevel();
+      });
+    });
+
+    // Sort select
+    document.getElementById('sortSelect').addEventListener('change', (e) => {
+      activeFilters.sort = e.target.value;
+      applyFiltersToCurrentLevel();
+    });
+
+    // Clear filters
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      activeFilters = {
+        search: '',
+        category: 'all',
+        status: 'all',
+        sort: 'name'
+      };
+      document.getElementById('searchInput').value = '';
+      document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+      document.querySelector('.category-filter[data-category="all"]').classList.add('active');
+      document.querySelectorAll('.status-filter').forEach(b => b.classList.remove('active'));
+      document.querySelector('.status-filter[data-status="all"]').classList.add('active');
+      document.getElementById('sortSelect').value = 'name';
+      applyFiltersToCurrentLevel();
+    });
+
+    // Apply filters to current visible level
+    function applyFiltersToCurrentLevel() {
+      if (!document.getElementById('level-organizations').classList.contains('hidden')) {
+        filterOrganizations();
+      } else if (!document.getElementById('level-projects').classList.contains('hidden')) {
+        filterProjects();
+      } else if (!document.getElementById('level-workspaces').classList.contains('hidden')) {
+        filterWorkspaces();
+      }
+    }
+
+    // Filter organizations
+    function filterOrganizations() {
+      const grid = document.getElementById('organizations-grid');
+      const cards = Array.from(grid.querySelectorAll('.card'));
+
+      let filtered = cards.filter(card => {
+        const name = card.dataset.name.toLowerCase();
+        const category = card.dataset.category;
+        const status = card.dataset.status;
+
+        const matchesSearch = !activeFilters.search || name.includes(activeFilters.search);
+        const matchesCategory = activeFilters.category === 'all' || category === activeFilters.category;
+        const matchesStatus = activeFilters.status === 'all' || status === activeFilters.status;
+
+        return matchesSearch && matchesCategory && matchesStatus;
+      });
+
+      // Hide all cards
+      cards.forEach(card => card.style.display = 'none');
+
+      // Sort filtered cards
+      filtered = sortCards(filtered);
+
+      // Paginate
+      const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+      currentPages.organizations = Math.min(currentPages.organizations, Math.max(1, totalPages));
+
+      const start = (currentPages.organizations - 1) * ITEMS_PER_PAGE;
+      const end = start + ITEMS_PER_PAGE;
+
+      filtered.slice(start, end).forEach(card => {
+        card.style.display = 'block';
+      });
+
+      updatePaginationUI('organizations', currentPages.organizations, totalPages);
+    }
+
+    // Sort cards
+    function sortCards(cards) {
+      return cards.sort((a, b) => {
+        switch (activeFilters.sort) {
+          case 'name':
+            return a.dataset.name.localeCompare(b.dataset.name);
+          case 'recent':
+            return 0; // Simulate recent sorting
+          case 'projects':
+            return 0; // Would sort by project count if available
+          case 'workspaces':
+            return 0; // Would sort by workspace count if available
+          default:
+            return 0;
+        }
+      });
+    }
+
+    // Pagination
+    function changePage(level, direction) {
+      const totalPagesEl = document.getElementById(`${level}-total-pages`);
+      const totalPages = parseInt(totalPagesEl.textContent);
+
+      if (direction === 'prev' && currentPages[level] > 1) {
+        currentPages[level]--;
+      } else if (direction === 'next' && currentPages[level] < totalPages) {
+        currentPages[level]++;
+      }
+
+      applyFiltersToCurrentLevel();
+    }
+
+    // Update pagination UI
+    function updatePaginationUI(level, currentPage, totalPages) {
+      document.getElementById(`${level}-current-page`).textContent = currentPage;
+      document.getElementById(`${level}-total-pages`).textContent = totalPages;
+
+      const pagination = document.getElementById(`${level}-pagination`);
+      const prevBtn = pagination.querySelector('button:first-child');
+      const nextBtn = pagination.querySelector('button:last-child');
+
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    // Filter placeholder functions (for projects and workspaces)
+    function filterProjects() {
+      // Projects are dynamically generated in selectOrganization
+    }
+
+    function filterWorkspaces() {
+      // Workspaces are dynamically generated in selectProject
+    }
+
+    // Initialize pagination on load
+    window.addEventListener('load', () => {
+      filterOrganizations();
+    });
+  </script>
+</body>
+</html>
