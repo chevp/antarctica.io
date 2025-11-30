@@ -56,7 +56,8 @@ export default {
           icon: 'cloud',
           color: 'purple',
           projectCount: 8,
-          status: 'Active'
+          status: 'Active',
+          link: 'https://chevp.github.io/ice-station.io/?id=cryo-platform'
         },
         {
           id: 'demo-apps',
@@ -65,7 +66,8 @@ export default {
           icon: 'apps',
           color: 'green',
           projectCount: 10,
-          status: '7 Available • 3 Coming Soon'
+          status: '7 Available • 3 Coming Soon',
+          link: 'https://chevp.github.io/ice-station.io/?id=demo-apps'
         }
       ]
     }
