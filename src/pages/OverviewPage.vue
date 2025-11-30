@@ -47,7 +47,7 @@ export default {
           color: 'blue',
           projectCount: 12,
           status: 'Active',
-          link: 'https://chevp.github.io/ice-station.io/frostwind-outpost'
+          link: 'https://chevp.github.io/ice-station.io/?id=frostwind-outpost'
         },
         {
           id: 'cryo-platform',
