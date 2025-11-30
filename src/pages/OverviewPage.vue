@@ -22,6 +22,7 @@
         :color="org.color"
         :project-count="org.projectCount"
         :status="org.status"
+        :link="org.link"
       />
     </div>
   </div>
@@ -39,13 +40,14 @@ export default {
     return {
       organizations: [
         {
-          id: 'arctic-engine',
-          title: 'Arctic Engine',
-          description: 'Core rendering engine and tooling ecosystem',
+          id: 'frostwind-outpost',
+          title: 'Frostwind Outpost',
+          description: 'Environment for working and configuring decks',
           icon: 'api',
           color: 'blue',
           projectCount: 12,
-          status: 'Active'
+          status: 'Active',
+          link: 'https://chevp.github.io/ice-station.io/frostwind-outpost'
         },
         {
           id: 'cryo-platform',

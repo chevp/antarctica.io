@@ -11,7 +11,6 @@ const currentYear = new Date().getFullYear()
       <a href="https://chevp.github.io/site-policy/impressum.html" target="_blank" rel="noopener" class="text-slate-500 hover:text-slate-300 transition-colors">Impressum</a>
       <a href="/docs" class="text-slate-500 hover:text-slate-300 transition-colors">Docs</a>
       <a href="https://chevp.github.io/site-policy/contact.html" target="_blank" rel="noopener" class="text-slate-500 hover:text-slate-300 transition-colors">Contact</a>
-      <button type="button" class="text-slate-500 hover:text-slate-300 transition-colors">Manage cookies</button>
     </nav>
   </footer>
 </template>

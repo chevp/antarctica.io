@@ -1,5 +1,10 @@
 <template>
-  <div class="card glass rounded-xl p-6 border border-slate-700/50">
+  <a
+    :href="link"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="card glass rounded-xl p-6 border border-slate-700/50 block cursor-pointer hover:border-slate-600 transition-colors"
+  >
     <div class="flex items-start justify-between mb-4">
       <div
         class="w-16 h-16 rounded-xl flex items-center justify-center"
@@ -16,7 +21,7 @@
       <span>•</span>
       <span>{{ status }}</span>
     </div>
-  </div>
+  </a>
 </template>
 
 <script>
@@ -46,6 +51,10 @@ export default {
     status: {
       type: String,
       default: 'Active'
+    },
+    link: {
+      type: String,
+      default: '#'
     }
   },
   computed: {

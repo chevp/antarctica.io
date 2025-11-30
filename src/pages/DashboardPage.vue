@@ -3,7 +3,7 @@
     <!-- Page Header -->
     <div class="mb-12 text-center">
       <h2 class="text-4xl font-bold mb-4">Welcome to Cryo Lab</h2>
-      <p class="text-slate-400 text-lg">Your development environment for building modern applications</p>
+      <p class="text-slate-400 text-lg">Your environment for working and configuring decks</p>
     </div>
 
     <!-- Get Cryo Lab Button -->
