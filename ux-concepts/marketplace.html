@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryo Lab Marketplace - Modules & Projects</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            arctic: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+    }
+
+    .gradient-green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-vue {
+      background: linear-gradient(135deg, #42b883 0%, #35495e 100%);
+    }
+
+    .tag-nodejs {
+      background: rgba(104, 159, 99, 0.2);
+      color: #68a063;
+      border: 1px solid rgba(104, 159, 99, 0.3);
+    }
+
+    .tag-vue {
+      background: rgba(66, 184, 131, 0.2);
+      color: #42b883;
+      border: 1px solid rgba(66, 184, 131, 0.3);
+    }
+
+    .tag-typescript {
+      background: rgba(49, 120, 198, 0.2);
+      color: #3178c6;
+      border: 1px solid rgba(49, 120, 198, 0.3);
+    }
+
+    .search-input:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .filter-btn.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      color: #60a5fa;
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: rgba(59, 130, 246, 0.5);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .stat-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .module-card {
+      transition: all 0.2s ease;
+    }
+
+    .module-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+    }
+
+    .tab-active {
+      background: rgba(59, 130, 246, 0.15);
+      border-bottom: 2px solid #3b82f6;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/50 sticky top-0 bg-slate-950/90 backdrop-blur-lg z-50">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <span class="material-icons text-arctic-400">ac_unit</span>
+        <span class="font-semibold text-lg">Cryo Lab</span>
+        <span class="text-slate-500 text-sm ml-2">Marketplace</span>
+      </a>
+      <nav class="flex items-center gap-6">
+        <a href="cryo-lab-download.html" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Download</a>
+        <a href="#modules" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Modules</a>
+        <a href="#projects" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Projects</a>
+        <a href="upload.html" class="text-arctic-400 hover:text-arctic-300 transition-colors text-sm font-medium flex items-center gap-1">
+          <span class="material-icons text-base">cloud_upload</span>
+          Upload
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="container mx-auto px-6 py-12">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
+        <span class="material-icons text-green-400 text-sm">store</span>
+        <span class="text-sm text-slate-300">Extensions & Projects</span>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+        <span class="gradient-text">Cryo Lab Marketplace</span>
+      </h1>
+
+      <p class="text-lg text-slate-400 mb-8 max-w-2xl mx-auto">
+        Discover Node.js modules and Vue.js projects to extend your Cryo Lab environment.
+        Download, select, or upload your own creations.
+      </p>
+
+      <!-- Search Bar -->
+      <div class="max-w-xl mx-auto">
+        <div class="relative">
+          <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">search</span>
+          <input type="text" placeholder="Search modules and projects..."
+                 class="search-input w-full glass rounded-xl pl-12 pr-4 py-4 text-slate-100 placeholder-slate-500
+                        focus:outline-none transition-all">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="container mx-auto px-6 pb-8">
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <div class="stat-badge rounded-lg px-4 py-2 flex items-center gap-2">
+        <span class="material-icons text-green-400 text-base">inventory_2</span>
+        <span class="text-sm"><strong class="text-slate-100">124</strong> <span class="text-slate-400">Modules</span></span>
+      </div>
+      <div class="stat-badge rounded-lg px-4 py-2 flex items-center gap-2">
+        <span class="material-icons text-emerald-400 text-base">folder_special</span>
+        <span class="text-sm"><strong class="text-slate-100">58</strong> <span class="text-slate-400">Projects</span></span>
+      </div>
+      <div class="stat-badge rounded-lg px-4 py-2 flex items-center gap-2">
+        <span class="material-icons text-arctic-400 text-base">download</span>
+        <span class="text-sm"><strong class="text-slate-100">15.2k</strong> <span class="text-slate-400">Downloads</span></span>
+      </div>
+      <div class="stat-badge rounded-lg px-4 py-2 flex items-center gap-2">
+        <span class="material-icons text-amber-400 text-base">people</span>
+        <span class="text-sm"><strong class="text-slate-100">892</strong> <span class="text-slate-400">Contributors</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Tabs -->
+  <section class="container mx-auto px-6 pb-6">
+    <div class="flex items-center justify-center gap-2 flex-wrap">
+      <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium glass transition-all">
+        All
+      </button>
+      <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium glass transition-all text-slate-400 hover:text-slate-100">
+        <span class="inline-flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-green-500"></span>
+          Node.js Modules
+        </span>
+      </button>
+      <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium glass transition-all text-slate-400 hover:text-slate-100">
+        <span class="inline-flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          Vue.js Projects
+        </span>
+      </button>
+      <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium glass transition-all text-slate-400 hover:text-slate-100">
+        <span class="inline-flex items-center gap-1">
+          <span class="material-icons text-amber-400 text-sm">star</span>
+          Featured
+        </span>
+      </button>
+      <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium glass transition-all text-slate-400 hover:text-slate-100">
+        <span class="inline-flex items-center gap-1">
+          <span class="material-icons text-arctic-400 text-sm">trending_up</span>
+          Popular
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Node.js Modules Section -->
+  <section id="modules" class="container mx-auto px-6 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+          <span class="material-icons text-green-400 text-lg">inventory_2</span>
+        </span>
+        Node.js Modules
+      </h2>
+      <a href="#" class="text-sm text-arctic-400 hover:text-arctic-300 transition-colors flex items-center gap-1">
+        View all <span class="material-icons text-base">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Module Card 1 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+              <span class="material-icons text-white text-lg">memory</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-buffer-utils</h3>
+              <p class="text-xs text-slate-500">v2.1.4</p>
+            </div>
+          </div>
+          <span class="material-icons text-amber-400 text-base">star</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">High-performance buffer manipulation utilities for real-time data processing in Cryo Lab.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-nodejs text-xs px-2 py-1 rounded-md">Node.js</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 3.2k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 128
+            </span>
+          </div>
+          <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+            Install
+          </button>
+        </div>
+      </div>
+
+      <!-- Module Card 2 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+              <span class="material-icons text-white text-lg">auto_awesome</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-shader-compiler</h3>
+              <p class="text-xs text-slate-500">v1.8.0</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">GLSL/HLSL shader compilation and optimization for the Cryo Lab rendering pipeline.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-nodejs text-xs px-2 py-1 rounded-md">Node.js</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 2.8k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 96
+            </span>
+          </div>
+          <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+            Install
+          </button>
+        </div>
+      </div>
+
+      <!-- Module Card 3 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+              <span class="material-icons text-white text-lg">hub</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-scene-graph</h3>
+              <p class="text-xs text-slate-500">v3.0.2</p>
+            </div>
+          </div>
+          <span class="material-icons text-amber-400 text-base">star</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Efficient scene graph implementation with transform hierarchy and spatial queries.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-nodejs text-xs px-2 py-1 rounded-md">Node.js</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 4.1k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 215
+            </span>
+          </div>
+          <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+            Install
+          </button>
+        </div>
+      </div>
+
+      <!-- Module Card 4 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+              <span class="material-icons text-white text-lg">image</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-texture-loader</h3>
+              <p class="text-xs text-slate-500">v1.5.1</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Async texture loading with format conversion, mipmap generation, and caching.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-nodejs text-xs px-2 py-1 rounded-md">Node.js</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 1.9k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 74
+            </span>
+          </div>
+          <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+            Install
+          </button>
+        </div>
+      </div>
+
+      <!-- Module Card 5 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+              <span class="material-icons text-white text-lg">speed</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-math</h3>
+              <p class="text-xs text-slate-500">v4.2.0</p>
+            </div>
+          </div>
+          <span class="material-icons text-amber-400 text-base">star</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">SIMD-optimized vector and matrix math library for graphics computations.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-nodejs text-xs px-2 py-1 rounded-md">Node.js</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 5.6k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 342
+            </span>
+          </div>
+          <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+            Install
+          </button>
+        </div>
+      </div>
+
+      <!-- Module Card 6 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+              <span class="material-icons text-white text-lg">dns</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-asset-server</h3>
+              <p class="text-xs text-slate-500">v2.0.3</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Local asset server with hot-reloading and WebSocket sync for development.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-nodejs text-xs px-2 py-1 rounded-md">Node.js</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 1.4k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 58
+            </span>
+          </div>
+          <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+            Install
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vue.js Projects Section -->
+  <section id="projects" class="container mx-auto px-6 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+          <span class="material-icons text-emerald-400 text-lg">folder_special</span>
+        </span>
+        Vue.js Projects
+      </h2>
+      <a href="#" class="text-sm text-arctic-400 hover:text-arctic-300 transition-colors flex items-center gap-1">
+        View all <span class="material-icons text-base">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Vue Project Card 1 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+              <span class="material-icons text-white text-lg">dashboard</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-dashboard</h3>
+              <p class="text-xs text-slate-500">v1.2.0</p>
+            </div>
+          </div>
+          <span class="material-icons text-amber-400 text-base">star</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Modern dashboard UI for monitoring Cryo Lab performance and system metrics.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-vue text-xs px-2 py-1 rounded-md">Vue 3</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 892
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 67
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="glass px-3 py-1.5 rounded-lg text-slate-300 text-xs font-medium hover:bg-white/10 transition-all">
+              Preview
+            </button>
+            <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue Project Card 2 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+              <span class="material-icons text-white text-lg">brush</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-shader-editor</h3>
+              <p class="text-xs text-slate-500">v2.0.1</p>
+            </div>
+          </div>
+          <span class="material-icons text-amber-400 text-base">star</span>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Advanced shader editor with syntax highlighting, autocomplete, and live preview.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-vue text-xs px-2 py-1 rounded-md">Vue 3</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 1.5k
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 124
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="glass px-3 py-1.5 rounded-lg text-slate-300 text-xs font-medium hover:bg-white/10 transition-all">
+              Preview
+            </button>
+            <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue Project Card 3 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+              <span class="material-icons text-white text-lg">account_tree</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-node-editor</h3>
+              <p class="text-xs text-slate-500">v1.0.5</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Visual node-based editor for creating shader graphs and material workflows.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-vue text-xs px-2 py-1 rounded-md">Vue 3</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 743
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 52
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="glass px-3 py-1.5 rounded-lg text-slate-300 text-xs font-medium hover:bg-white/10 transition-all">
+              Preview
+            </button>
+            <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue Project Card 4 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+              <span class="material-icons text-white text-lg">inventory</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-asset-browser</h3>
+              <p class="text-xs text-slate-500">v1.3.2</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Asset browser with drag-drop support, thumbnails, and metadata editing.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-vue text-xs px-2 py-1 rounded-md">Vue 3</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 621
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 45
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="glass px-3 py-1.5 rounded-lg text-slate-300 text-xs font-medium hover:bg-white/10 transition-all">
+              Preview
+            </button>
+            <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue Project Card 5 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+              <span class="material-icons text-white text-lg">timeline</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-timeline</h3>
+              <p class="text-xs text-slate-500">v0.9.8</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Animation timeline component with keyframe editing and curve interpolation.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-vue text-xs px-2 py-1 rounded-md">Vue 3</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 412
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 38
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="glass px-3 py-1.5 rounded-lg text-slate-300 text-xs font-medium hover:bg-white/10 transition-all">
+              Preview
+            </button>
+            <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue Project Card 6 -->
+      <div class="module-card glass rounded-xl p-5 cursor-pointer">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+              <span class="material-icons text-white text-lg">settings</span>
+            </div>
+            <div>
+              <h3 class="font-semibold text-sm">cryo-settings-panel</h3>
+              <p class="text-xs text-slate-500">v1.1.0</p>
+            </div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-sm mb-4">Configurable settings panel with tabs, search, and preset management.</p>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="tag-vue text-xs px-2 py-1 rounded-md">Vue 3</span>
+          <span class="tag-typescript text-xs px-2 py-1 rounded-md">TypeScript</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">download</span> 534
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">star</span> 41
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="glass px-3 py-1.5 rounded-lg text-slate-300 text-xs font-medium hover:bg-white/10 transition-all">
+              Preview
+            </button>
+            <button class="gradient-bg px-3 py-1.5 rounded-lg text-white text-xs font-medium hover:opacity-90 transition-opacity">
+              Select
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected Packages Bar -->
+  <div class="fixed bottom-0 left-0 right-0 glass border-t border-slate-700/50 transform translate-y-full transition-transform"
+       id="selection-bar">
+    <div class="container mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-slate-400">
+            <strong class="text-slate-100">3</strong> packages selected
+          </span>
+          <div class="flex items-center gap-2">
+            <span class="tag-nodejs text-xs px-2 py-1 rounded-md">cryo-math</span>
+            <span class="tag-vue text-xs px-2 py-1 rounded-md">cryo-dashboard</span>
+            <span class="text-slate-500 text-xs">+1 more</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-sm text-slate-400 hover:text-slate-100 transition-colors">
+            Clear selection
+          </button>
+          <button class="gradient-bg px-5 py-2 rounded-lg font-medium text-white text-sm flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <span class="material-icons text-base">download</span>
+            Download Selected
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/50 mt-16">
+    <div class="container mx-auto px-6 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-slate-500 text-sm">
+          <span class="material-icons text-arctic-400 text-base">ac_unit</span>
+          <span>Cryo Lab Marketplace</span>
+          <span class="text-slate-700">·</span>
+          <span>Antarctica.io</span>
+        </div>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="cryo-lab-download.html" class="text-slate-400 hover:text-slate-100 transition-colors">Download Cryo Lab</a>
+          <a href="https://github.com/chevp" target="_blank"
+             class="text-slate-400 hover:text-slate-100 transition-colors">GitHub</a>
+          <a href="https://chevp.github.io" target="_blank"
+             class="text-slate-400 hover:text-slate-100 transition-colors">Portfolio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

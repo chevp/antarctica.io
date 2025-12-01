@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload - Cryo Lab Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            arctic: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+    }
+
+    .gradient-green {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .gradient-vue {
+      background: linear-gradient(135deg, #42b883 0%, #35495e 100%);
+    }
+
+    .tag-nodejs {
+      background: rgba(104, 159, 99, 0.2);
+      color: #68a063;
+      border: 1px solid rgba(104, 159, 99, 0.3);
+    }
+
+    .tag-vue {
+      background: rgba(66, 184, 131, 0.2);
+      color: #42b883;
+      border: 1px solid rgba(66, 184, 131, 0.3);
+    }
+
+    .tag-typescript {
+      background: rgba(49, 120, 198, 0.2);
+      color: #3178c6;
+      border: 1px solid rgba(49, 120, 198, 0.3);
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: rgba(59, 130, 246, 0.5);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .upload-zone.has-file {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .tab-btn {
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-bottom: 2px solid #3b82f6;
+      color: #60a5fa;
+    }
+
+    .tab-btn:not(.active):hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .input-field {
+      transition: all 0.2s ease;
+    }
+
+    .input-field:focus {
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .step-indicator {
+      transition: all 0.3s ease;
+    }
+
+    .step-indicator.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .step-indicator.completed {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .preview-card {
+      transition: all 0.2s ease;
+    }
+
+    .preview-card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .checkbox-custom {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-custom:checked {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+      background-size: 14px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/50 sticky top-0 bg-slate-950/90 backdrop-blur-lg z-50">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="marketplace.html" class="flex items-center gap-2">
+        <span class="material-icons text-arctic-400">ac_unit</span>
+        <span class="font-semibold text-lg">Cryo Lab</span>
+        <span class="text-slate-500 text-sm ml-2">Marketplace</span>
+      </a>
+      <nav class="flex items-center gap-6">
+        <a href="cryo-lab-download.html" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Download</a>
+        <a href="marketplace.html" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Browse</a>
+        <span class="text-arctic-400 text-sm font-medium flex items-center gap-1">
+          <span class="material-icons text-base">cloud_upload</span>
+          Upload
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="container mx-auto px-6 py-12">
+    <div class="max-w-2xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
+        <span class="material-icons text-arctic-400 text-sm">cloud_upload</span>
+        <span class="text-sm text-slate-300">Share with the community</span>
+      </div>
+
+      <h1 class="text-4xl font-extrabold mb-4">
+        <span class="gradient-text">Share Your Creation</span>
+      </h1>
+
+      <p class="text-lg text-slate-400 mb-8">
+        Upload your Node.js modules or Vue.js projects to share with the Cryo Lab community.
+      </p>
+    </div>
+  </section>
+
+  <!-- Progress Steps -->
+  <section class="container mx-auto px-6 pb-8">
+    <div class="max-w-3xl mx-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="step-indicator active w-10 h-10 rounded-full border-2 border-slate-700 flex items-center justify-center">
+            <span class="text-sm font-semibold">1</span>
+          </div>
+          <span class="text-sm font-medium">Select Type</span>
+        </div>
+        <div class="flex-1 h-px bg-slate-700 mx-4"></div>
+        <div class="flex items-center gap-3">
+          <div class="step-indicator w-10 h-10 rounded-full border-2 border-slate-700 flex items-center justify-center">
+            <span class="text-sm font-semibold text-slate-500">2</span>
+          </div>
+          <span class="text-sm text-slate-500">Upload Files</span>
+        </div>
+        <div class="flex-1 h-px bg-slate-700 mx-4"></div>
+        <div class="flex items-center gap-3">
+          <div class="step-indicator w-10 h-10 rounded-full border-2 border-slate-700 flex items-center justify-center">
+            <span class="text-sm font-semibold text-slate-500">3</span>
+          </div>
+          <span class="text-sm text-slate-500">Details</span>
+        </div>
+        <div class="flex-1 h-px bg-slate-700 mx-4"></div>
+        <div class="flex items-center gap-3">
+          <div class="step-indicator w-10 h-10 rounded-full border-2 border-slate-700 flex items-center justify-center">
+            <span class="text-sm font-semibold text-slate-500">4</span>
+          </div>
+          <span class="text-sm text-slate-500">Publish</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Upload Form -->
+  <section class="container mx-auto px-6 py-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="glass rounded-2xl overflow-hidden">
+
+        <!-- Type Selection Tabs -->
+        <div class="flex border-b border-slate-700/50">
+          <button class="tab-btn active flex-1 px-6 py-4 text-sm font-medium transition-colors">
+            <span class="flex items-center justify-center gap-2">
+              <div class="w-8 h-8 rounded-lg gradient-green flex items-center justify-center">
+                <span class="material-icons text-white text-base">inventory_2</span>
+              </div>
+              Node.js Module
+            </span>
+          </button>
+          <button class="tab-btn flex-1 px-6 py-4 text-sm font-medium text-slate-400 transition-colors">
+            <span class="flex items-center justify-center gap-2">
+              <div class="w-8 h-8 rounded-lg gradient-vue flex items-center justify-center">
+                <span class="material-icons text-white text-base">folder_special</span>
+              </div>
+              Vue.js Project
+            </span>
+          </button>
+        </div>
+
+        <div class="p-8">
+          <!-- Upload Zone -->
+          <div class="upload-zone rounded-xl p-10 text-center mb-8 cursor-pointer" id="dropzone">
+            <input type="file" id="file-input" class="hidden" accept=".zip,.tgz,.tar.gz" multiple>
+            <span class="material-icons text-6xl text-slate-500 mb-4">cloud_upload</span>
+            <h3 class="text-xl font-semibold mb-2">Drag & drop your package</h3>
+            <p class="text-slate-400 mb-4">or click to browse files</p>
+            <div class="flex items-center justify-center gap-3 text-xs text-slate-500">
+              <span class="tag-nodejs px-2 py-1 rounded">.zip</span>
+              <span class="tag-nodejs px-2 py-1 rounded">.tgz</span>
+              <span class="tag-nodejs px-2 py-1 rounded">package.json</span>
+            </div>
+          </div>
+
+          <!-- Uploaded Files Preview -->
+          <div class="mb-8 hidden" id="uploaded-files">
+            <h4 class="text-sm font-medium text-slate-300 mb-3">Uploaded Files</h4>
+            <div class="space-y-2">
+              <div class="preview-card glass rounded-lg p-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                    <span class="material-icons text-green-400">folder_zip</span>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium">cryo-my-module.zip</p>
+                    <p class="text-xs text-slate-500">2.4 MB</p>
+                  </div>
+                </div>
+                <button class="text-slate-400 hover:text-red-400 transition-colors">
+                  <span class="material-icons">close</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Package Details Form -->
+          <div class="space-y-6">
+            <h4 class="text-lg font-semibold flex items-center gap-2">
+              <span class="material-icons text-arctic-400">info</span>
+              Package Details
+            </h4>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium mb-2 text-slate-300">
+                  Package Name <span class="text-red-400">*</span>
+                </label>
+                <input type="text" placeholder="cryo-my-module"
+                       class="input-field w-full glass rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none">
+                <p class="text-xs text-slate-500 mt-1">Must start with "cryo-" prefix</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2 text-slate-300">
+                  Version <span class="text-red-400">*</span>
+                </label>
+                <input type="text" placeholder="1.0.0" value="1.0.0"
+                       class="input-field w-full glass rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none">
+                <p class="text-xs text-slate-500 mt-1">Semantic versioning (major.minor.patch)</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2 text-slate-300">
+                Description <span class="text-red-400">*</span>
+              </label>
+              <textarea placeholder="A brief description of your package and what it does..."
+                        rows="3"
+                        class="input-field w-full glass rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none resize-none"></textarea>
+              <p class="text-xs text-slate-500 mt-1">Maximum 200 characters</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2 text-slate-300">Tags</label>
+              <input type="text" placeholder="graphics, shader, utility, rendering"
+                     class="input-field w-full glass rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none">
+              <p class="text-xs text-slate-500 mt-1">Comma-separated, helps users find your package</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium mb-2 text-slate-300">Repository URL</label>
+                <div class="relative">
+                  <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-base">link</span>
+                  <input type="text" placeholder="https://github.com/username/repo"
+                         class="input-field w-full glass rounded-lg pl-10 pr-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2 text-slate-300">Documentation URL</label>
+                <div class="relative">
+                  <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-base">description</span>
+                  <input type="text" placeholder="https://docs.example.com"
+                         class="input-field w-full glass rounded-lg pl-10 pr-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none">
+                </div>
+              </div>
+            </div>
+
+            <!-- License Selection -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-slate-300">License</label>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="radio" name="license" value="mit" checked class="checkbox-custom">
+                  <span class="text-sm">MIT</span>
+                </label>
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="radio" name="license" value="apache" class="checkbox-custom">
+                  <span class="text-sm">Apache 2.0</span>
+                </label>
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="radio" name="license" value="gpl" class="checkbox-custom">
+                  <span class="text-sm">GPL 3.0</span>
+                </label>
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="radio" name="license" value="other" class="checkbox-custom">
+                  <span class="text-sm">Other</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Dependencies -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-slate-300">
+                Cryo Lab Compatibility
+              </label>
+              <div class="grid md:grid-cols-3 gap-3">
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="checkbox" checked class="checkbox-custom">
+                  <span class="text-sm">Cryo Lab 1.x</span>
+                </label>
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="checkbox" class="checkbox-custom">
+                  <span class="text-sm">Cryo Lab 2.x</span>
+                </label>
+                <label class="glass rounded-lg p-3 cursor-pointer hover:border-arctic-500/50 transition-all flex items-center gap-2">
+                  <input type="checkbox" class="checkbox-custom">
+                  <span class="text-sm">Cryo Lab 3.x (Beta)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Screenshots/Preview -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-slate-300">
+                Screenshots / Preview Images
+              </label>
+              <div class="grid grid-cols-4 gap-3">
+                <div class="upload-zone aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer">
+                  <span class="material-icons text-slate-500 text-2xl">add_photo_alternate</span>
+                  <span class="text-xs text-slate-500 mt-1">Add Image</span>
+                </div>
+                <div class="glass aspect-square rounded-lg flex items-center justify-center border border-dashed border-slate-700">
+                  <span class="material-icons text-slate-700">image</span>
+                </div>
+                <div class="glass aspect-square rounded-lg flex items-center justify-center border border-dashed border-slate-700">
+                  <span class="material-icons text-slate-700">image</span>
+                </div>
+                <div class="glass aspect-square rounded-lg flex items-center justify-center border border-dashed border-slate-700">
+                  <span class="material-icons text-slate-700">image</span>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-2">PNG or JPG, max 2MB each. First image will be used as thumbnail.</p>
+            </div>
+
+            <!-- README -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-slate-300">
+                README / Documentation
+              </label>
+              <textarea placeholder="# My Module\n\nDetailed documentation in Markdown format...\n\n## Installation\n\n```bash\nnpm install cryo-my-module\n```"
+                        rows="8"
+                        class="input-field w-full glass rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none resize-none font-mono text-sm"></textarea>
+              <p class="text-xs text-slate-500 mt-1">Supports Markdown formatting</p>
+            </div>
+          </div>
+
+          <!-- Terms & Submit -->
+          <div class="mt-8 pt-8 border-t border-slate-700/50">
+            <label class="flex items-start gap-3 mb-6 cursor-pointer">
+              <input type="checkbox" class="checkbox-custom mt-0.5">
+              <span class="text-sm text-slate-400">
+                I confirm that I have the rights to publish this package and agree to the
+                <a href="https://chevp.github.io/site-policy/marketplace-terms.html" target="_blank" class="text-arctic-400 hover:text-arctic-300">Terms of Service</a> and
+                <a href="https://chevp.github.io/site-policy/publishing-guidelines.html" target="_blank" class="text-arctic-400 hover:text-arctic-300">Publishing Guidelines</a>.
+              </span>
+            </label>
+
+            <div class="flex items-center gap-4">
+              <button class="gradient-bg px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25">
+                <span class="material-icons">publish</span>
+                Publish Package
+              </button>
+              <button class="glass glass-hover px-6 py-4 rounded-xl font-medium text-slate-300 flex items-center gap-2 transition-all">
+                <span class="material-icons text-base">save</span>
+                Save as Draft
+              </button>
+              <button class="px-6 py-4 rounded-xl font-medium text-slate-400 hover:text-slate-100 flex items-center gap-2 transition-all">
+                <span class="material-icons text-base">visibility</span>
+                Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Your Drafts Section -->
+  <section class="container mx-auto px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <span class="material-icons text-slate-400">drafts</span>
+        Your Drafts
+      </h2>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="glass glass-hover rounded-xl p-5 cursor-pointer transition-all">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg gradient-green flex items-center justify-center">
+                <span class="material-icons text-white text-lg">memory</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-sm">cryo-particle-system</h3>
+                <p class="text-xs text-slate-500">Draft · Last edited 2 days ago</p>
+              </div>
+            </div>
+            <span class="text-xs text-amber-400 bg-amber-400/10 px-2 py-1 rounded">Draft</span>
+          </div>
+          <p class="text-slate-400 text-sm mb-4">GPU-accelerated particle system for real-time visual effects...</p>
+          <div class="flex items-center gap-2">
+            <button class="text-xs text-arctic-400 hover:text-arctic-300 transition-colors">Continue editing</button>
+            <span class="text-slate-700">|</span>
+            <button class="text-xs text-slate-400 hover:text-red-400 transition-colors">Delete</button>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl p-5 cursor-pointer transition-all">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg gradient-vue flex items-center justify-center">
+                <span class="material-icons text-white text-lg">palette</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-sm">cryo-color-picker</h3>
+                <p class="text-xs text-slate-500">Draft · Last edited 1 week ago</p>
+              </div>
+            </div>
+            <span class="text-xs text-amber-400 bg-amber-400/10 px-2 py-1 rounded">Draft</span>
+          </div>
+          <p class="text-slate-400 text-sm mb-4">Advanced color picker component with HSL, RGB, and hex support...</p>
+          <div class="flex items-center gap-2">
+            <button class="text-xs text-arctic-400 hover:text-arctic-300 transition-colors">Continue editing</button>
+            <span class="text-slate-700">|</span>
+            <button class="text-xs text-slate-400 hover:text-red-400 transition-colors">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/50 mt-8">
+    <div class="container mx-auto px-6 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-slate-500 text-sm">
+          <span class="material-icons text-arctic-400 text-base">ac_unit</span>
+          <span>Cryo Lab Marketplace</span>
+          <span class="text-slate-700">·</span>
+          <span>Antarctica.io</span>
+        </div>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="cryo-lab-download.html" class="text-slate-400 hover:text-slate-100 transition-colors">Download Cryo Lab</a>
+          <a href="marketplace.html" class="text-slate-400 hover:text-slate-100 transition-colors">Browse Marketplace</a>
+          <a href="https://github.com/chevp" target="_blank"
+             class="text-slate-400 hover:text-slate-100 transition-colors">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple drag and drop functionality
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      dropzone.classList.add('has-file');
+      document.getElementById('uploaded-files').classList.remove('hidden');
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        dropzone.classList.add('has-file');
+        document.getElementById('uploaded-files').classList.remove('hidden');
+      }
+    });
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>

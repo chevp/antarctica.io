@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Package Rejected - Cryo Lab Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            arctic: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 4px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+    }
+
+    .gradient-red {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .error-icon {
+      animation: shake 0.5s ease-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+    }
+
+    .issue-card {
+      transition: all 0.2s ease;
+    }
+
+    .issue-card:hover {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .tag-nodejs {
+      background: rgba(104, 159, 99, 0.2);
+      color: #68a063;
+      border: 1px solid rgba(104, 159, 99, 0.3);
+    }
+
+    .severity-critical {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .severity-warning {
+      background: rgba(251, 191, 36, 0.1);
+      border-color: rgba(251, 191, 36, 0.3);
+    }
+
+    .severity-info {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .accordion-content.open {
+      max-height: 500px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/50">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="marketplace.html" class="flex items-center gap-2">
+        <span class="material-icons text-arctic-400">ac_unit</span>
+        <span class="font-semibold text-lg">Cryo Lab</span>
+        <span class="text-slate-500 text-sm ml-2">Marketplace</span>
+      </a>
+      <nav class="flex items-center gap-6">
+        <a href="cryo-lab-download.html" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Download</a>
+        <a href="marketplace.html" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Browse</a>
+        <a href="upload.html" class="text-slate-400 hover:text-slate-100 transition-colors text-sm">Upload</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Rejection Content -->
+  <main class="container mx-auto px-6 py-16">
+    <div class="max-w-3xl mx-auto">
+
+      <!-- Error Icon -->
+      <div class="text-center mb-8">
+        <div class="error-icon w-24 h-24 rounded-full gradient-red flex items-center justify-center mx-auto mb-8">
+          <span class="material-icons text-white text-5xl">close</span>
+        </div>
+
+        <h1 class="text-4xl font-extrabold mb-4">
+          <span class="text-red-400">Package Rejected</span>
+        </h1>
+
+        <p class="text-lg text-slate-400 mb-2">
+          Your package could not be published due to the following issues.
+        </p>
+        <p class="text-sm text-slate-500">
+          Please resolve these issues and try again.
+        </p>
+      </div>
+
+      <!-- Package Info Card -->
+      <div class="glass rounded-2xl p-6 mb-8">
+        <div class="flex items-start gap-4">
+          <div class="w-16 h-16 rounded-xl bg-red-500/20 flex items-center justify-center flex-shrink-0">
+            <span class="material-icons text-red-400 text-2xl">inventory_2</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h2 class="text-xl font-bold">cryo-my-module</h2>
+              <span class="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">v1.0.0</span>
+              <span class="text-xs text-red-400 bg-red-400/10 px-2 py-1 rounded">Rejected</span>
+            </div>
+            <p class="text-slate-400 text-sm mb-3">
+              Submitted on November 30, 2024 at 14:35
+            </p>
+            <div class="flex items-center gap-2">
+              <span class="tag-nodejs text-xs px-2 py-1 rounded">Node.js</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issues Summary -->
+      <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-2 text-red-400">
+          <span class="material-icons text-base">error</span>
+          <span class="text-sm font-medium">2 Critical Issues</span>
+        </div>
+        <div class="flex items-center gap-2 text-amber-400">
+          <span class="material-icons text-base">warning</span>
+          <span class="text-sm font-medium">1 Warning</span>
+        </div>
+        <div class="flex items-center gap-2 text-blue-400">
+          <span class="material-icons text-base">info</span>
+          <span class="text-sm font-medium">1 Suggestion</span>
+        </div>
+      </div>
+
+      <!-- Issues List -->
+      <div class="space-y-4 mb-8">
+        <!-- Critical Issue 1 -->
+        <div class="issue-card glass rounded-xl border border-red-500/20 overflow-hidden">
+          <button class="w-full p-4 flex items-start gap-4 text-left accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-red-400">security</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-red-400 bg-red-400/10 px-2 py-0.5 rounded font-medium">CRITICAL</span>
+                <span class="text-xs text-slate-500">Security</span>
+              </div>
+              <h3 class="font-semibold">Security Vulnerability Detected</h3>
+              <p class="text-sm text-slate-400">Known vulnerability in dependency: lodash@4.17.15</p>
+            </div>
+            <span class="material-icons text-slate-500 accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content px-4 pb-4">
+            <div class="ml-14 p-4 bg-slate-900/50 rounded-lg">
+              <p class="text-sm text-slate-300 mb-3">
+                The package depends on <code class="bg-slate-800 px-1 rounded">lodash@4.17.15</code> which has a known prototype pollution vulnerability (CVE-2021-23337).
+              </p>
+              <p class="text-sm font-medium text-slate-200 mb-2">How to fix:</p>
+              <div class="bg-slate-800 rounded p-3 font-mono text-sm text-slate-300 mb-3">
+                npm update lodash@4.17.21
+              </div>
+              <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-23337" target="_blank"
+                 class="text-sm text-arctic-400 hover:text-arctic-300 flex items-center gap-1">
+                View CVE Details <span class="material-icons text-base">open_in_new</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Critical Issue 2 -->
+        <div class="issue-card glass rounded-xl border border-red-500/20 overflow-hidden">
+          <button class="w-full p-4 flex items-start gap-4 text-left accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-red-400">description</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-red-400 bg-red-400/10 px-2 py-0.5 rounded font-medium">CRITICAL</span>
+                <span class="text-xs text-slate-500">Documentation</span>
+              </div>
+              <h3 class="font-semibold">Missing Required README.md</h3>
+              <p class="text-sm text-slate-400">All packages must include documentation</p>
+            </div>
+            <span class="material-icons text-slate-500 accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content px-4 pb-4">
+            <div class="ml-14 p-4 bg-slate-900/50 rounded-lg">
+              <p class="text-sm text-slate-300 mb-3">
+                Your package is missing a README.md file. This is required for all packages published to the Cryo Lab Marketplace.
+              </p>
+              <p class="text-sm font-medium text-slate-200 mb-2">Your README should include:</p>
+              <ul class="text-sm text-slate-400 list-disc list-inside space-y-1 mb-3">
+                <li>Package description and purpose</li>
+                <li>Installation instructions</li>
+                <li>Basic usage examples</li>
+                <li>API documentation</li>
+                <li>License information</li>
+              </ul>
+              <a href="https://chevp.github.io/site-policy/publishing-guidelines.html#documentation" target="_blank"
+                 class="text-sm text-arctic-400 hover:text-arctic-300 flex items-center gap-1">
+                View Documentation Guidelines <span class="material-icons text-base">open_in_new</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning -->
+        <div class="issue-card glass rounded-xl border border-amber-500/20 overflow-hidden">
+          <button class="w-full p-4 flex items-start gap-4 text-left accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-amber-400">inventory_2</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded font-medium">WARNING</span>
+                <span class="text-xs text-slate-500">Package Structure</span>
+              </div>
+              <h3 class="font-semibold">Missing Type Definitions</h3>
+              <p class="text-sm text-slate-400">TypeScript definitions (.d.ts) not found</p>
+            </div>
+            <span class="material-icons text-slate-500 accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content px-4 pb-4">
+            <div class="ml-14 p-4 bg-slate-900/50 rounded-lg">
+              <p class="text-sm text-slate-300 mb-3">
+                While not strictly required, TypeScript type definitions are strongly recommended for better developer experience.
+              </p>
+              <p class="text-sm font-medium text-slate-200 mb-2">How to add types:</p>
+              <ol class="text-sm text-slate-400 list-decimal list-inside space-y-1">
+                <li>Add a <code class="bg-slate-800 px-1 rounded">types</code> field to package.json</li>
+                <li>Include <code class="bg-slate-800 px-1 rounded">.d.ts</code> files in your dist folder</li>
+                <li>Or use <code class="bg-slate-800 px-1 rounded">@types/</code> package reference</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info/Suggestion -->
+        <div class="issue-card glass rounded-xl border border-blue-500/20 overflow-hidden">
+          <button class="w-full p-4 flex items-start gap-4 text-left accordion-trigger" onclick="toggleAccordion(this)">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-blue-400">lightbulb</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded font-medium">SUGGESTION</span>
+                <span class="text-xs text-slate-500">Best Practice</span>
+              </div>
+              <h3 class="font-semibold">Add CHANGELOG.md</h3>
+              <p class="text-sm text-slate-400">Help users track changes between versions</p>
+            </div>
+            <span class="material-icons text-slate-500 accordion-icon">expand_more</span>
+          </button>
+          <div class="accordion-content px-4 pb-4">
+            <div class="ml-14 p-4 bg-slate-900/50 rounded-lg">
+              <p class="text-sm text-slate-300 mb-3">
+                A CHANGELOG.md helps users understand what changed between versions. This is optional but highly recommended.
+              </p>
+              <a href="https://keepachangelog.com/" target="_blank"
+                 class="text-sm text-arctic-400 hover:text-arctic-300 flex items-center gap-1">
+                Learn about Changelog format <span class="material-icons text-base">open_in_new</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Section -->
+      <div class="glass rounded-xl p-6 mb-8">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+          <span class="material-icons text-arctic-400">help</span>
+          Need Help?
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <a href="https://chevp.github.io/site-policy/publishing-guidelines.html" target="_blank"
+             class="glass rounded-lg p-4 flex items-center gap-3 hover:bg-white/5 transition-colors">
+            <span class="material-icons text-slate-400">menu_book</span>
+            <div>
+              <p class="font-medium text-sm">Publishing Guidelines</p>
+              <p class="text-xs text-slate-500">Review the requirements</p>
+            </div>
+          </a>
+          <a href="https://github.com/chevp" target="_blank"
+             class="glass rounded-lg p-4 flex items-center gap-3 hover:bg-white/5 transition-colors">
+            <span class="material-icons text-slate-400">forum</span>
+            <div>
+              <p class="font-medium text-sm">Community Support</p>
+              <p class="text-xs text-slate-500">Ask for help on GitHub</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="upload.html?edit=cryo-my-module"
+           class="gradient-bg px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25">
+          <span class="material-icons">edit</span>
+          Fix and Resubmit
+        </a>
+        <a href="upload.html"
+           class="glass glass-hover px-6 py-4 rounded-xl font-medium text-slate-300 flex items-center gap-2 transition-all">
+          <span class="material-icons">refresh</span>
+          Start Over
+        </a>
+        <a href="marketplace.html"
+           class="px-6 py-4 rounded-xl font-medium text-slate-400 hover:text-slate-100 flex items-center gap-2 transition-colors">
+          <span class="material-icons">arrow_back</span>
+          Back to Marketplace
+        </a>
+      </div>
+
+      <!-- Draft Saved Notice -->
+      <div class="mt-8 glass rounded-lg p-4 flex items-center gap-3">
+        <span class="material-icons text-amber-400">save</span>
+        <div>
+          <p class="text-sm font-medium">Your submission has been saved as a draft</p>
+          <p class="text-xs text-slate-500">You can continue editing from your <a href="upload.html#drafts" class="text-arctic-400 hover:text-arctic-300">drafts</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/50 mt-8">
+    <div class="container mx-auto px-6 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-slate-500 text-sm">
+          <span class="material-icons text-arctic-400 text-base">ac_unit</span>
+          <span>Cryo Lab Marketplace</span>
+          <span class="text-slate-700">·</span>
+          <span>Antarctica.io</span>
+        </div>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="cryo-lab-download.html" class="text-slate-400 hover:text-slate-100 transition-colors">Download Cryo Lab</a>
+          <a href="https://github.com/chevp" target="_blank" class="text-slate-400 hover:text-slate-100 transition-colors">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleAccordion(button) {
+      const content = button.nextElementSibling;
+      const icon = button.querySelector('.accordion-icon');
+
+      content.classList.toggle('open');
+      icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+  </script>
+</body>
+</html>
