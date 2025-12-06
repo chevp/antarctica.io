@@ -1,7 +1,7 @@
 /**
  * ExternalDocEmbed - Vanilla JS Web Component
  *
- * Embeds external HTML documentation from chevp.github.io assets
+ * Embeds HTML documentation with sidebar navigation
  * into the Antarctica.io documentation system.
  *
  * Usage:
@@ -9,9 +9,6 @@
  *     src="figma-angular-mcp-pipeline"
  *     title="Figma to Angular Pipeline">
  *   </external-doc-embed>
- *
- * The component fetches content from:
- *   https://chevp.github.io/assets/{src}.html
  */
 
 class ExternalDocEmbed extends HTMLElement {
@@ -45,18 +42,41 @@ class ExternalDocEmbed extends HTMLElement {
     return this.getAttribute('src') || '';
   }
 
+  set src(value) {
+    if (value) {
+      this.setAttribute('src', value);
+    } else {
+      this.removeAttribute('src');
+    }
+  }
+
   get title() {
     return this.getAttribute('title') || 'Documentation';
   }
 
+  set title(value) {
+    if (value) {
+      this.setAttribute('title', value);
+    } else {
+      this.removeAttribute('title');
+    }
+  }
+
   get baseUrl() {
-    return this.getAttribute('base-url') || 'https://chevp.github.io/assets';
+    return this.getAttribute('base-url') || '/assets';
+  }
+
+  set baseUrl(value) {
+    if (value) {
+      this.setAttribute('base-url', value);
+    } else {
+      this.removeAttribute('base-url');
+    }
   }
 
   get fullUrl() {
     const src = this.src;
     if (!src) return null;
-    // Add .html extension if not present
     const filename = src.endsWith('.html') ? src : `${src}.html`;
     return `${this.baseUrl}/${filename}`;
   }
@@ -91,112 +111,375 @@ class ExternalDocEmbed extends HTMLElement {
   }
 
   extractContent(html) {
-    // Create a temporary container to parse the HTML
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
 
-    // Extract the main content (body) and styles
-    const body = doc.body;
-    const styles = doc.querySelectorAll('style');
-    const links = doc.querySelectorAll('link[rel="stylesheet"]');
+    // Extract sidebar navigation
+    const sidebar = doc.querySelector('aside nav');
+    const sidebarHtml = sidebar ? sidebar.innerHTML : '';
 
-    // Extract inline styles from <style> tags
+    // Extract main content
+    const main = doc.querySelector('main .max-w-4xl');
+    const mainHtml = main ? main.innerHTML : '';
+
+    // Extract styles
+    const styles = doc.querySelectorAll('style');
     let extractedStyles = '';
     styles.forEach(style => {
       extractedStyles += style.textContent;
     });
 
-    // Get body content
-    const bodyContent = body ? body.innerHTML : html;
-
     return {
-      styles: extractedStyles,
-      content: bodyContent,
-      stylesheetLinks: Array.from(links).map(link => link.href)
+      sidebar: sidebarHtml,
+      content: mainHtml,
+      styles: extractedStyles
     };
   }
 
   getStyles() {
     return `
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+      @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+
       :host {
         display: block;
         width: 100%;
         height: 100%;
+        font-family: 'Inter', sans-serif;
+        color: #e2e8f0;
       }
 
-      .embed-container {
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        overflow: hidden;
+      code, pre {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      .doc-container {
+        display: flex;
         height: 100%;
+        background: transparent;
+      }
+
+      /* Sidebar */
+      .doc-sidebar {
+        width: 256px;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.03);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px 0 0 12px;
+        padding: 16px;
+        overflow-y: auto;
+      }
+
+      .doc-sidebar nav {
         display: flex;
         flex-direction: column;
+        gap: 4px;
       }
 
-      .embed-header {
+      .doc-sidebar a {
+        display: block;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #94a3b8;
+        text-decoration: none;
+        border-left: 2px solid transparent;
+        transition: all 0.2s ease;
+      }
+
+      .doc-sidebar a:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-left-color: #3b82f6;
+        color: #fff;
+      }
+
+      .doc-sidebar .nav-section-title {
+        padding: 16px 12px 8px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      /* Main Content */
+      .doc-content {
+        flex: 1;
+        padding: 24px 32px;
+        overflow-y: auto;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 0 12px 12px 0;
+      }
+
+      .doc-content section {
+        margin-bottom: 48px;
+        scroll-margin-top: 24px;
+      }
+
+      .doc-content h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 12px 16px;
-        background: rgba(30, 41, 59, 0.8);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 12px;
       }
 
-      .embed-title {
+      .doc-content h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+
+      .doc-content h4 {
         font-size: 14px;
         font-weight: 600;
-        color: #e2e8f0;
-        margin: 0;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+
+      .doc-content p {
+        color: #94a3b8;
+        line-height: 1.7;
+        margin-bottom: 16px;
+      }
+
+      /* Glass cards */
+      .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .doc-content .glass {
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      /* Code blocks */
+      .code-block, pre {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 16px;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      /* Gradient text */
+      .gradient-text {
+        background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .gradient-purple {
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .gradient-green {
+        background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .gradient-orange {
+        background: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Grid layouts */
+      .grid {
+        display: grid;
+      }
+
+      .grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .gap-4 {
+        gap: 16px;
+      }
+
+      .gap-6 {
+        gap: 24px;
+      }
+
+      /* Flex utilities */
+      .flex {
         display: flex;
+      }
+
+      .items-center {
         align-items: center;
+      }
+
+      .items-start {
+        align-items: flex-start;
+      }
+
+      .justify-between {
+        justify-content: space-between;
+      }
+
+      .gap-2 {
         gap: 8px;
       }
 
-      .embed-title::before {
-        content: '';
-        width: 8px;
-        height: 8px;
-        background: linear-gradient(135deg, #60a5fa, #3b82f6);
-        border-radius: 50%;
+      .gap-3 {
+        gap: 12px;
       }
 
-      .embed-actions {
-        display: flex;
-        gap: 8px;
+      /* Spacing */
+      .mb-1 { margin-bottom: 4px; }
+      .mb-2 { margin-bottom: 8px; }
+      .mb-3 { margin-bottom: 12px; }
+      .mb-4 { margin-bottom: 16px; }
+      .mb-6 { margin-bottom: 24px; }
+      .mb-8 { margin-bottom: 32px; }
+      .mt-0\.5 { margin-top: 2px; }
+      .mt-1 { margin-top: 4px; }
+      .mt-6 { margin-top: 24px; }
+      .pt-4 { padding-top: 16px; }
+      .pt-6 { padding-top: 24px; }
+      .pb-2 { padding-bottom: 8px; }
+      .p-3 { padding: 12px; }
+      .p-4 { padding: 16px; }
+      .p-6 { padding: 24px; }
+      .p-8 { padding: 32px; }
+      .px-3 { padding-left: 12px; padding-right: 12px; }
+
+      /* Sizing */
+      .w-5 { width: 20px; }
+      .w-8 { width: 32px; }
+      .w-10 { width: 40px; }
+      .w-16 { width: 64px; }
+      .h-5 { height: 20px; }
+      .h-8 { height: 32px; }
+      .h-10 { height: 40px; }
+      .h-16 { height: 64px; }
+
+      /* Border radius */
+      .rounded { border-radius: 4px; }
+      .rounded-lg { border-radius: 8px; }
+      .rounded-xl { border-radius: 12px; }
+      .rounded-2xl { border-radius: 16px; }
+
+      /* Colors */
+      .text-white { color: #fff; }
+      .text-slate-300 { color: #cbd5e1; }
+      .text-slate-400 { color: #94a3b8; }
+      .text-slate-500 { color: #64748b; }
+      .text-blue-400 { color: #60a5fa; }
+      .text-purple-400 { color: #a78bfa; }
+      .text-green-400 { color: #4ade80; }
+      .text-orange-400 { color: #fb923c; }
+      .text-red-400 { color: #f87171; }
+      .text-cyan-400 { color: #22d3ee; }
+
+      .bg-blue-500\/20 { background: rgba(59, 130, 246, 0.2); }
+      .bg-purple-500\/20 { background: rgba(168, 85, 247, 0.2); }
+      .bg-green-500\/20 { background: rgba(34, 197, 94, 0.2); }
+      .bg-orange-500\/20 { background: rgba(249, 115, 22, 0.2); }
+
+      .border-blue-500\/20 { border-color: rgba(59, 130, 246, 0.2); }
+      .border-purple-500\/20 { border-color: rgba(168, 85, 247, 0.2); }
+      .border-green-500\/20 { border-color: rgba(34, 197, 94, 0.2); }
+      .border-orange-500\/20 { border-color: rgba(249, 115, 22, 0.2); }
+      .border-slate-700\/50 { border-color: rgba(51, 65, 85, 0.5); }
+
+      /* Gradients for icons */
+      .bg-gradient-to-br {
+        background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
       }
 
-      .embed-action {
-        padding: 6px 12px;
-        background: rgba(59, 130, 246, 0.2);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 6px;
-        color: #60a5fa;
-        font-size: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
+      .from-blue-500 { --tw-gradient-from: #3b82f6; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+      .to-blue-600 { --tw-gradient-to: #2563eb; }
+      .from-purple-500 { --tw-gradient-from: #a855f7; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+      .to-purple-600 { --tw-gradient-to: #9333ea; }
+      .from-green-500 { --tw-gradient-from: #22c55e; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+      .to-green-600 { --tw-gradient-to: #16a34a; }
+      .from-orange-500 { --tw-gradient-from: #f97316; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+      .to-red-500 { --tw-gradient-to: #ef4444; }
+
+      /* Font utilities */
+      .text-xs { font-size: 12px; }
+      .text-sm { font-size: 14px; }
+      .text-base { font-size: 16px; }
+      .text-lg { font-size: 18px; }
+      .text-xl { font-size: 20px; }
+      .text-2xl { font-size: 24px; }
+      .text-3xl { font-size: 30px; }
+      .font-medium { font-weight: 500; }
+      .font-semibold { font-weight: 600; }
+      .font-bold { font-weight: 700; }
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+      .uppercase { text-transform: uppercase; }
+      .tracking-wider { letter-spacing: 0.05em; }
+
+      /* Pipeline animation */
+      .flow-line {
+        stroke-dasharray: 8 4;
+        animation: dash 1s linear infinite;
       }
 
-      .embed-action:hover {
-        background: rgba(59, 130, 246, 0.3);
-        border-color: rgba(59, 130, 246, 0.5);
+      @keyframes dash {
+        to { stroke-dashoffset: -12; }
       }
 
-      .embed-content {
-        flex: 1;
-        overflow: auto;
-        position: relative;
+      /* Material icons */
+      .material-icons-outlined {
+        font-family: 'Material Icons Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
       }
 
-      .embed-iframe {
-        width: 100%;
-        height: 100%;
-        min-height: 600px;
-        border: none;
-        background: #0f172a;
-      }
+      /* Space utilities */
+      .space-y-1 > * + * { margin-top: 4px; }
+      .space-y-2 > * + * { margin-top: 8px; }
+      .space-y-4 > * + * { margin-top: 16px; }
+      .space-y-6 > * + * { margin-top: 24px; }
+      .space-y-16 > * + * { margin-top: 64px; }
 
+      /* Border utilities */
+      .border { border-width: 1px; }
+      .border-t { border-top-width: 1px; }
+      .border-l-2 { border-left-width: 2px; }
+
+      /* Other */
+      .flex-1 { flex: 1; }
+      .flex-shrink-0 { flex-shrink: 0; }
+      .overflow-x-auto { overflow-x: auto; }
+      .leading-relaxed { line-height: 1.625; }
+      .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+      /* Loading & Error states */
       .loading-state,
       .error-state {
         display: flex;
@@ -205,7 +488,7 @@ class ExternalDocEmbed extends HTMLElement {
         justify-content: center;
         padding: 48px;
         text-align: center;
-        color: #94a3b8;
+        height: 100%;
       }
 
       .loading-spinner {
@@ -234,16 +517,6 @@ class ExternalDocEmbed extends HTMLElement {
         color: #ef4444;
         font-size: 24px;
       }
-
-      .error-message {
-        color: #f87171;
-        margin-bottom: 8px;
-      }
-
-      .error-hint {
-        font-size: 12px;
-        color: #64748b;
-      }
     `;
   }
 
@@ -253,15 +526,10 @@ class ExternalDocEmbed extends HTMLElement {
     if (this._loading) {
       this.shadowRoot.innerHTML = `
         <style>${styles}</style>
-        <div class="embed-container">
-          <div class="embed-header">
-            <h3 class="embed-title">${this.title}</h3>
-          </div>
-          <div class="embed-content">
-            <div class="loading-state">
-              <div class="loading-spinner"></div>
-              <p>Loading documentation...</p>
-            </div>
+        <div class="doc-container">
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Loading documentation...</p>
           </div>
         </div>
       `;
@@ -271,44 +539,45 @@ class ExternalDocEmbed extends HTMLElement {
     if (this._error) {
       this.shadowRoot.innerHTML = `
         <style>${styles}</style>
-        <div class="embed-container">
-          <div class="embed-header">
-            <h3 class="embed-title">${this.title}</h3>
-          </div>
-          <div class="embed-content">
-            <div class="error-state">
-              <div class="error-icon">!</div>
-              <p class="error-message">${this._error}</p>
-              <p class="error-hint">Source: ${this.fullUrl || 'not specified'}</p>
-            </div>
+        <div class="doc-container">
+          <div class="error-state">
+            <div class="error-icon">!</div>
+            <p style="color: #f87171; margin-bottom: 8px;">${this._error}</p>
+            <p style="font-size: 12px; color: #64748b;">Source: ${this.fullUrl || 'not specified'}</p>
           </div>
         </div>
       `;
       return;
     }
 
-    // Use iframe for complete isolation and proper styling
+    // Render sidebar + content
     this.shadowRoot.innerHTML = `
       <style>${styles}</style>
-      <div class="embed-container">
-        <div class="embed-header">
-          <h3 class="embed-title">${this.title}</h3>
-          <div class="embed-actions">
-            <a href="${this.fullUrl}" target="_blank" class="embed-action">
-              Open in New Tab
-            </a>
+      <div class="doc-container">
+        <aside class="doc-sidebar">
+          <nav class="space-y-1">
+            ${this._content.sidebar}
+          </nav>
+        </aside>
+        <main class="doc-content">
+          <div class="space-y-16">
+            ${this._content.content}
           </div>
-        </div>
-        <div class="embed-content">
-          <iframe
-            class="embed-iframe"
-            src="${this.fullUrl}"
-            sandbox="allow-scripts allow-same-origin"
-            loading="lazy"
-          ></iframe>
-        </div>
+        </main>
       </div>
     `;
+
+    // Add click handlers for navigation
+    this.shadowRoot.querySelectorAll('.doc-sidebar a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        const target = this.shadowRoot.getElementById(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
   }
 }
 

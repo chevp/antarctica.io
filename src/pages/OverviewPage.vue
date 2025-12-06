@@ -2,13 +2,13 @@
   <div class="max-w-7xl mx-auto">
     <!-- Breadcrumb Navigation -->
     <div class="flex items-center gap-2 text-sm mb-8">
-      <span class="text-blue-400 font-medium cursor-pointer hover:text-blue-300 transition-colors">Organizations</span>
+      <span class="text-blue-400 font-medium cursor-pointer hover:text-blue-300 transition-colors">Groups</span>
     </div>
 
     <!-- Page Header -->
     <div class="mb-8">
-      <h2 class="text-3xl font-bold mb-2">Select an Organization</h2>
-      <p class="text-slate-400">Choose your organization to view projects</p>
+      <h2 class="text-3xl font-bold mb-2">Select a Group</h2>
+      <p class="text-slate-400">Choose your group to view projects</p>
     </div>
 
     <!-- Organizations Grid -->

@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma-to-Angular MCP Pipeline - Konzeptdokumentation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            arctic: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+    * { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-purple {
+      background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-green {
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-orange {
+      background: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .flow-line {
+      stroke-dasharray: 8 4;
+      animation: dash 1s linear infinite;
+    }
+
+    @keyframes dash {
+      to { stroke-dashoffset: -12; }
+    }
+
+    .code-block {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link {
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-left-color: #3b82f6;
+    }
+
+    .pipeline-step {
+      position: relative;
+    }
+
+    .pipeline-step::after {
+      content: '';
+      position: absolute;
+      right: -2rem;
+      top: 50%;
+      width: 2rem;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, transparent);
+    }
+
+    .pipeline-step:last-child::after {
+      display: none;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-700/50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+          <span class="material-icons-outlined text-white">hub</span>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold gradient-text">Figma-to-Angular MCP Pipeline</h1>
+          <p class="text-xs text-slate-400">Design-to-Code mit Business Context</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="#architecture" class="text-sm text-slate-300 hover:text-white transition-colors">Architektur</a>
+        <a href="#mcp-server" class="text-sm text-slate-300 hover:text-white transition-colors">MCP Server</a>
+        <a href="#business-context" class="text-sm text-slate-300 hover:text-white transition-colors">Business Context</a>
+        <a href="#implementation" class="text-sm text-slate-300 hover:text-white transition-colors">Implementierung</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="flex pt-20">
+
+    <!-- Sidebar Navigation -->
+    <aside class="fixed left-0 top-20 bottom-0 w-64 glass border-r border-slate-700/50 p-4 overflow-y-auto">
+      <nav class="space-y-1">
+        <a href="#overview" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">home</span>
+            Uebersicht
+          </span>
+        </a>
+        <a href="#problem" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">warning</span>
+            Problemstellung
+          </span>
+        </a>
+        <a href="#architecture" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">architecture</span>
+            Architektur
+          </span>
+        </a>
+
+        <div class="pt-4 pb-2">
+          <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Pipeline Stufen</p>
+        </div>
+
+        <a href="#stage-1" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-5 rounded bg-purple-500/20 text-purple-400 text-xs flex items-center justify-center font-bold">1</span>
+            Figma Export
+          </span>
+        </a>
+        <a href="#stage-2" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-5 rounded bg-blue-500/20 text-blue-400 text-xs flex items-center justify-center font-bold">2</span>
+            MCP Server
+          </span>
+        </a>
+        <a href="#stage-3" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-5 rounded bg-green-500/20 text-green-400 text-xs flex items-center justify-center font-bold">3</span>
+            Business Context
+          </span>
+        </a>
+        <a href="#stage-4" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="w-5 h-5 rounded bg-orange-500/20 text-orange-400 text-xs flex items-center justify-center font-bold">4</span>
+            Angular Generation
+          </span>
+        </a>
+
+        <div class="pt-4 pb-2">
+          <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Spezifikationen</p>
+        </div>
+
+        <a href="#mcp-server" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">dns</span>
+            MCP Server API
+          </span>
+        </a>
+        <a href="#business-context" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">description</span>
+            Markdown Specs
+          </span>
+        </a>
+        <a href="#rest-api" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">api</span>
+            REST API Binding
+          </span>
+        </a>
+        <a href="#implementation" class="nav-link block px-3 py-2 rounded-lg text-sm text-slate-300 border-l-2 border-transparent hover:text-white">
+          <span class="flex items-center gap-2">
+            <span class="material-icons-outlined text-base">code</span>
+            Implementierung
+          </span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Content Area -->
+    <main class="ml-64 flex-1 p-8">
+      <div class="max-w-4xl mx-auto space-y-16">
+
+        <!-- Overview Section -->
+        <section id="overview" class="scroll-mt-24">
+          <div class="glass rounded-2xl p-8 border border-slate-700/50">
+            <h2 class="text-3xl font-bold gradient-text mb-6">Figma Make to Production Angular</h2>
+            <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+              Diese Pipeline transformiert Figma-Prototypen (via Figma Make Export) in produktionsreife Angular-Applikationen,
+              indem ein MCP-Server den Business-Kontext aus Markdown-Spezifikationen mit REST-API-Definitionen verbindet.
+            </p>
+
+            <!-- Key Benefits -->
+            <div class="grid grid-cols-3 gap-4">
+              <div class="glass rounded-xl p-4 border border-purple-500/20">
+                <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center mb-3">
+                  <span class="material-icons-outlined text-purple-400">design_services</span>
+                </div>
+                <h3 class="font-semibold text-white mb-1">Design-First</h3>
+                <p class="text-sm text-slate-400">Figma-Prototypen als Single Source of Truth fuer UI</p>
+              </div>
+              <div class="glass rounded-xl p-4 border border-blue-500/20">
+                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-3">
+                  <span class="material-icons-outlined text-blue-400">hub</span>
+                </div>
+                <h3 class="font-semibold text-white mb-1">MCP-Orchestriert</h3>
+                <p class="text-sm text-slate-400">Claude verbindet Design mit Business-Logik</p>
+              </div>
+              <div class="glass rounded-xl p-4 border border-green-500/20">
+                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-3">
+                  <span class="material-icons-outlined text-green-400">rocket_launch</span>
+                </div>
+                <h3 class="font-semibold text-white mb-1">Production-Ready</h3>
+                <p class="text-sm text-slate-400">Direkt deploybare Angular-Apps</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Problem Statement -->
+        <section id="problem" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <span class="material-icons-outlined text-orange-400">warning</span>
+            Die Lücke zwischen Design und Production
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-orange-500/20 mb-6">
+            <h3 class="text-lg font-semibold text-orange-400 mb-4">Aktuelle Herausforderungen</h3>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <span class="material-icons-outlined text-red-400 mt-0.5">close</span>
+                <div>
+                  <p class="text-white font-medium">Figma Make generiert nur statisches HTML/CSS</p>
+                  <p class="text-sm text-slate-400">Keine Interaktivitaet, keine Datenbindung, kein State Management</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="material-icons-outlined text-red-400 mt-0.5">close</span>
+                <div>
+                  <p class="text-white font-medium">Business-Logik muss manuell implementiert werden</p>
+                  <p class="text-sm text-slate-400">API-Calls, Validierung, Workflows - alles von Hand</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="material-icons-outlined text-red-400 mt-0.5">close</span>
+                <div>
+                  <p class="text-white font-medium">Kontext geht bei der Uebertragung verloren</p>
+                  <p class="text-sm text-slate-400">Designer-Intent wird nicht in Code uebersetzt</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass rounded-2xl p-6 border border-green-500/20">
+            <h3 class="text-lg font-semibold text-green-400 mb-4">Die Loesung: MCP-basierte Pipeline</h3>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <span class="material-icons-outlined text-green-400 mt-0.5">check</span>
+                <div>
+                  <p class="text-white font-medium">Automatische Komponenten-Erkennung</p>
+                  <p class="text-sm text-slate-400">MCP-Server analysiert Figma-Export und identifiziert UI-Patterns</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="material-icons-outlined text-green-400 mt-0.5">check</span>
+                <div>
+                  <p class="text-white font-medium">Business Context aus Markdown</p>
+                  <p class="text-sm text-slate-400">Dutzende Markdown-Dateien definieren Use Cases, APIs, Validierungen</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="material-icons-outlined text-green-400 mt-0.5">check</span>
+                <div>
+                  <p class="text-white font-medium">REST API Auto-Binding</p>
+                  <p class="text-sm text-slate-400">Services werden automatisch aus OpenAPI/Swagger generiert</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Architecture Overview -->
+        <section id="architecture" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <span class="material-icons-outlined text-blue-400">architecture</span>
+            Pipeline-Architektur
+          </h2>
+
+          <!-- Visual Pipeline -->
+          <div class="glass rounded-2xl p-8 border border-slate-700/50 mb-8">
+            <div class="flex items-center justify-between mb-8">
+
+              <!-- Stage 1: Figma -->
+              <div class="pipeline-step flex-1 text-center">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-3 shadow-lg shadow-purple-500/30">
+                  <span class="material-icons-outlined text-white text-2xl">palette</span>
+                </div>
+                <h4 class="font-semibold text-white">Figma</h4>
+                <p class="text-xs text-slate-400">Design Export</p>
+              </div>
+
+              <!-- Arrow -->
+              <div class="w-12 flex items-center justify-center">
+                <svg width="40" height="20" class="text-slate-600">
+                  <path d="M0 10 L30 10 M25 5 L30 10 L25 15" stroke="currentColor" fill="none" stroke-width="2" class="flow-line"/>
+                </svg>
+              </div>
+
+              <!-- Stage 2: MCP Server -->
+              <div class="pipeline-step flex-1 text-center">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-3 shadow-lg shadow-blue-500/30">
+                  <span class="material-icons-outlined text-white text-2xl">hub</span>
+                </div>
+                <h4 class="font-semibold text-white">MCP Server</h4>
+                <p class="text-xs text-slate-400">Orchestrierung</p>
+              </div>
+
+              <!-- Arrow -->
+              <div class="w-12 flex items-center justify-center">
+                <svg width="40" height="20" class="text-slate-600">
+                  <path d="M0 10 L30 10 M25 5 L30 10 L25 15" stroke="currentColor" fill="none" stroke-width="2" class="flow-line"/>
+                </svg>
+              </div>
+
+              <!-- Stage 3: Business Context -->
+              <div class="pipeline-step flex-1 text-center">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-3 shadow-lg shadow-green-500/30">
+                  <span class="material-icons-outlined text-white text-2xl">description</span>
+                </div>
+                <h4 class="font-semibold text-white">Context</h4>
+                <p class="text-xs text-slate-400">Markdown Specs</p>
+              </div>
+
+              <!-- Arrow -->
+              <div class="w-12 flex items-center justify-center">
+                <svg width="40" height="20" class="text-slate-600">
+                  <path d="M0 10 L30 10 M25 5 L30 10 L25 15" stroke="currentColor" fill="none" stroke-width="2" class="flow-line"/>
+                </svg>
+              </div>
+
+              <!-- Stage 4: Angular -->
+              <div class="flex-1 text-center">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-3 shadow-lg shadow-orange-500/30">
+                  <span class="material-icons-outlined text-white text-2xl">web</span>
+                </div>
+                <h4 class="font-semibold text-white">Angular</h4>
+                <p class="text-xs text-slate-400">Production App</p>
+              </div>
+            </div>
+
+            <!-- Data Flow Description -->
+            <div class="border-t border-slate-700/50 pt-6">
+              <div class="grid grid-cols-4 gap-4 text-sm">
+                <div class="text-center">
+                  <p class="text-purple-400 font-medium">HTML/CSS/Assets</p>
+                  <p class="text-slate-500 text-xs mt-1">Figma Make Output</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-blue-400 font-medium">Component AST</p>
+                  <p class="text-slate-500 text-xs mt-1">Parsed Structure</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-green-400 font-medium">Use Case Binding</p>
+                  <p class="text-slate-500 text-xs mt-1">API + Logic</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-orange-400 font-medium">Full Angular</p>
+                  <p class="text-slate-500 text-xs mt-1">Components + Services</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stage 1: Figma Export -->
+        <section id="stage-1" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold gradient-purple mb-6 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-sm font-bold text-purple-400">1</span>
+            Figma Make Export
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-purple-500/20">
+            <p class="text-slate-300 mb-6">
+              Figma Make exportiert Design-Prototypen als statisches HTML/CSS. Der MCP-Server analysiert diese Struktur
+              und extrahiert Komponenten-Hierarchien, Styles und Asset-Referenzen.
+            </p>
+
+            <h4 class="font-semibold text-white mb-3">Erwartete Export-Struktur:</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-sm">
+              <pre class="text-slate-300"><span class="text-slate-500">figma-export/</span>
+├── <span class="text-purple-400">index.html</span>          <span class="text-slate-500"># Main entry point</span>
+├── <span class="text-blue-400">styles/</span>
+│   ├── global.css       <span class="text-slate-500"># Design tokens, variables</span>
+│   └── components.css   <span class="text-slate-500"># Component styles</span>
+├── <span class="text-green-400">assets/</span>
+│   ├── images/          <span class="text-slate-500"># Exported images</span>
+│   ├── icons/           <span class="text-slate-500"># SVG icons</span>
+│   └── fonts/           <span class="text-slate-500"># Custom fonts</span>
+└── <span class="text-orange-400">pages/</span>
+    ├── dashboard.html   <span class="text-slate-500"># Individual pages</span>
+    ├── login.html
+    └── settings.html</pre>
+            </div>
+
+            <h4 class="font-semibold text-white mt-6 mb-3">Figma Component Naming Convention:</h4>
+            <p class="text-sm text-slate-400 mb-3">
+              Figma-Komponenten sollten mit speziellen Prefixen benannt werden, um die automatische Erkennung zu ermoeglichen:
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="glass rounded-lg p-3 border border-slate-700/50">
+                <code class="text-purple-400 text-sm">@form/</code>
+                <p class="text-xs text-slate-400 mt-1">Formular-Elemente mit Validierung</p>
+              </div>
+              <div class="glass rounded-lg p-3 border border-slate-700/50">
+                <code class="text-blue-400 text-sm">@data/</code>
+                <p class="text-xs text-slate-400 mt-1">Daten-gebundene Komponenten</p>
+              </div>
+              <div class="glass rounded-lg p-3 border border-slate-700/50">
+                <code class="text-green-400 text-sm">@action/</code>
+                <p class="text-xs text-slate-400 mt-1">Buttons mit API-Calls</p>
+              </div>
+              <div class="glass rounded-lg p-3 border border-slate-700/50">
+                <code class="text-orange-400 text-sm">@nav/</code>
+                <p class="text-xs text-slate-400 mt-1">Navigation/Routing</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stage 2: MCP Server -->
+        <section id="stage-2" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold gradient-text mb-6 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-sm font-bold text-blue-400">2</span>
+            MCP Server Orchestrierung
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-blue-500/20">
+            <p class="text-slate-300 mb-6">
+              Der MCP-Server ist das Herzstuck der Pipeline. Er verbindet Claude mit dem Figma-Export,
+              den Business-Spezifikationen und der Code-Generierung.
+            </p>
+
+            <h4 class="font-semibold text-white mb-4">MCP Server Capabilities:</h4>
+
+            <div class="space-y-4">
+              <!-- Tool 1 -->
+              <div class="glass rounded-xl p-4 border border-slate-700/50">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="material-icons-outlined text-blue-400">search</span>
+                  <code class="text-blue-400 font-semibold">analyze_figma_export</code>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">Parst den Figma-Export und erstellt einen Component AST</p>
+                <div class="code-block rounded-lg p-3 text-xs">
+                  <pre class="text-slate-300">{
+  "path": "figma-export/",
+  "options": {
+    "extractStyles": true,
+    "identifyPatterns": true,
+    "mapAssets": true
+  }
+}</pre>
+                </div>
+              </div>
+
+              <!-- Tool 2 -->
+              <div class="glass rounded-xl p-4 border border-slate-700/50">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="material-icons-outlined text-green-400">link</span>
+                  <code class="text-green-400 font-semibold">bind_business_context</code>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">Verbindet UI-Komponenten mit Business-Use-Cases aus Markdown</p>
+                <div class="code-block rounded-lg p-3 text-xs">
+                  <pre class="text-slate-300">{
+  "component": "LoginForm",
+  "useCase": "user-authentication.md",
+  "apiBinding": "POST /api/auth/login"
+}</pre>
+                </div>
+              </div>
+
+              <!-- Tool 3 -->
+              <div class="glass rounded-xl p-4 border border-slate-700/50">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="material-icons-outlined text-orange-400">code</span>
+                  <code class="text-orange-400 font-semibold">generate_angular_component</code>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">Generiert production-ready Angular-Komponenten mit Services</p>
+                <div class="code-block rounded-lg p-3 text-xs">
+                  <pre class="text-slate-300">{
+  "component": "LoginForm",
+  "outputPath": "src/app/features/auth/",
+  "includeTests": true,
+  "standalone": true
+}</pre>
+                </div>
+              </div>
+
+              <!-- Tool 4 -->
+              <div class="glass rounded-xl p-4 border border-slate-700/50">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="material-icons-outlined text-purple-400">api</span>
+                  <code class="text-purple-400 font-semibold">generate_api_service</code>
+                </div>
+                <p class="text-sm text-slate-400 mb-3">Erstellt typisierte Angular HTTP Services aus OpenAPI Spec</p>
+                <div class="code-block rounded-lg p-3 text-xs">
+                  <pre class="text-slate-300">{
+  "openApiSpec": "specs/api.yaml",
+  "outputPath": "src/app/core/services/",
+  "httpClient": "angular"
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stage 3: Business Context -->
+        <section id="stage-3" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold gradient-green mb-6 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center text-sm font-bold text-green-400">3</span>
+            Business Context Spezifikation
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-green-500/20 mb-6">
+            <p class="text-slate-300 mb-6">
+              Der Business-Kontext wird in dutzenden Markdown-Dateien spezifiziert. Jede Datei beschreibt
+              einen Use Case, eine API, Validierungsregeln oder Workflow-Definitionen.
+            </p>
+
+            <h4 class="font-semibold text-white mb-3">Ordnerstruktur der Spezifikationen:</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-sm mb-6">
+              <pre class="text-slate-300"><span class="text-slate-500">specs/</span>
+├── <span class="text-green-400">use-cases/</span>              <span class="text-slate-500"># Business Use Cases</span>
+│   ├── user-authentication.md
+│   ├── product-catalog.md
+│   ├── shopping-cart.md
+│   ├── checkout-flow.md
+│   ├── order-management.md
+│   └── ...                  <span class="text-slate-500"># (20+ Dateien)</span>
+│
+├── <span class="text-blue-400">api/</span>                     <span class="text-slate-500"># REST API Definitionen</span>
+│   ├── openapi.yaml         <span class="text-slate-500"># OpenAPI 3.0 Spec</span>
+│   ├── endpoints/
+│   │   ├── auth.md
+│   │   ├── products.md
+│   │   ├── orders.md
+│   │   └── ...
+│   └── models/
+│       ├── user.md
+│       ├── product.md
+│       └── ...
+│
+├── <span class="text-purple-400">validation/</span>              <span class="text-slate-500"># Validierungsregeln</span>
+│   ├── form-rules.md
+│   ├── business-rules.md
+│   └── error-messages.md
+│
+├── <span class="text-orange-400">workflows/</span>               <span class="text-slate-500"># Prozess-Definitionen</span>
+│   ├── registration-flow.md
+│   ├── payment-flow.md
+│   └── order-status-flow.md
+│
+└── <span class="text-cyan-400">ui-mapping/</span>              <span class="text-slate-500"># UI zu Use Case Mapping</span>
+    ├── component-mapping.md
+    └── page-routing.md</pre>
+            </div>
+          </div>
+
+          <!-- Example Markdown Spec -->
+          <div id="business-context" class="glass rounded-2xl p-6 border border-slate-700/50">
+            <h4 class="font-semibold text-white mb-4 flex items-center gap-2">
+              <span class="material-icons-outlined text-green-400">description</span>
+              Beispiel: use-cases/user-authentication.md
+            </h4>
+            <div class="code-block rounded-xl p-4 font-mono text-sm overflow-x-auto">
+              <pre class="text-slate-300"><span class="text-green-400"># User Authentication</span>
+
+<span class="text-slate-500">## Overview</span>
+Ermoeglicht Benutzern die Anmeldung mit E-Mail und Passwort.
+
+<span class="text-slate-500">## UI Components</span>
+- <span class="text-purple-400">@form/LoginForm</span>: Hauptformular fuer Login
+- <span class="text-purple-400">@action/SubmitButton</span>: Absende-Button
+- <span class="text-purple-400">@data/ErrorMessage</span>: Fehleranzeige
+
+<span class="text-slate-500">## API Binding</span>
+```yaml
+endpoint: POST /api/auth/login
+request:
+  email: string (required, email format)
+  password: string (required, min 8 chars)
+response:
+  success:
+    token: string (JWT)
+    user: UserProfile
+  error:
+    code: string
+    message: string
+```
+
+<span class="text-slate-500">## Validation Rules</span>
+| Field    | Rule                | Error Message              |
+|----------|---------------------|----------------------------|
+| email    | required, email     | "Gueltige E-Mail eingeben" |
+| password | required, min:8     | "Mind. 8 Zeichen"          |
+
+<span class="text-slate-500">## State Transitions</span>
+1. IDLE -> LOADING (on submit)
+2. LOADING -> SUCCESS (on 200)
+3. LOADING -> ERROR (on 4xx/5xx)
+4. SUCCESS -> redirect to /dashboard
+
+<span class="text-slate-500">## Error Handling</span>
+- 401: "Falsche Anmeldedaten"
+- 429: "Zu viele Versuche"
+- 500: "Serverfehler, bitte spaeter versuchen"</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stage 4: Angular Generation -->
+        <section id="stage-4" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold gradient-orange mb-6 flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center text-sm font-bold text-orange-400">4</span>
+            Angular App Generierung
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-orange-500/20 mb-6">
+            <p class="text-slate-300 mb-6">
+              Der MCP-Server generiert eine vollstaendige Angular-Applikation mit allen notwendigen Komponenten,
+              Services, Guards und Konfigurationen.
+            </p>
+
+            <h4 class="font-semibold text-white mb-3">Generierte Angular-Struktur:</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-sm">
+              <pre class="text-slate-300"><span class="text-slate-500">angular-app/</span>
+├── <span class="text-orange-400">src/app/</span>
+│   ├── <span class="text-blue-400">core/</span>                   <span class="text-slate-500"># Core Module</span>
+│   │   ├── services/
+│   │   │   ├── auth.service.ts    <span class="text-slate-500"># Generated from API spec</span>
+│   │   │   ├── product.service.ts
+│   │   │   └── order.service.ts
+│   │   ├── guards/
+│   │   │   └── auth.guard.ts
+│   │   ├── interceptors/
+│   │   │   └── auth.interceptor.ts
+│   │   └── models/
+│   │       ├── user.model.ts
+│   │       └── product.model.ts
+│   │
+│   ├── <span class="text-green-400">features/</span>               <span class="text-slate-500"># Feature Modules</span>
+│   │   ├── auth/
+│   │   │   ├── login/
+│   │   │   │   ├── login.component.ts
+│   │   │   │   ├── login.component.html  <span class="text-slate-500"># From Figma</span>
+│   │   │   │   ├── login.component.scss  <span class="text-slate-500"># From Figma</span>
+│   │   │   │   └── login.component.spec.ts
+│   │   │   └── auth.routes.ts
+│   │   ├── dashboard/
+│   │   ├── products/
+│   │   └── checkout/
+│   │
+│   ├── <span class="text-purple-400">shared/</span>                 <span class="text-slate-500"># Shared Components</span>
+│   │   ├── components/
+│   │   │   ├── button/
+│   │   │   ├── input/
+│   │   │   └── card/
+│   │   └── directives/
+│   │
+│   └── app.routes.ts           <span class="text-slate-500"># From page-routing.md</span>
+│
+├── <span class="text-cyan-400">assets/</span>                     <span class="text-slate-500"># From Figma export</span>
+│   ├── images/
+│   ├── icons/
+│   └── fonts/
+│
+└── <span class="text-slate-400">environments/</span>
+    ├── environment.ts
+    └── environment.prod.ts</pre>
+            </div>
+          </div>
+
+          <!-- Generated Component Example -->
+          <div class="glass rounded-2xl p-6 border border-slate-700/50">
+            <h4 class="font-semibold text-white mb-4 flex items-center gap-2">
+              <span class="material-icons-outlined text-orange-400">code</span>
+              Beispiel: Generierte Login-Komponente
+            </h4>
+            <div class="code-block rounded-xl p-4 font-mono text-xs overflow-x-auto">
+              <pre class="text-slate-300"><span class="text-purple-400">import</span> { Component, inject } <span class="text-purple-400">from</span> <span class="text-green-400">'@angular/core'</span>;
+<span class="text-purple-400">import</span> { FormBuilder, ReactiveFormsModule, Validators } <span class="text-purple-400">from</span> <span class="text-green-400">'@angular/forms'</span>;
+<span class="text-purple-400">import</span> { Router } <span class="text-purple-400">from</span> <span class="text-green-400">'@angular/router'</span>;
+<span class="text-purple-400">import</span> { AuthService } <span class="text-purple-400">from</span> <span class="text-green-400">'@core/services/auth.service'</span>;
+
+<span class="text-blue-400">@Component</span>({
+  selector: <span class="text-green-400">'app-login'</span>,
+  standalone: <span class="text-orange-400">true</span>,
+  imports: [ReactiveFormsModule],
+  templateUrl: <span class="text-green-400">'./login.component.html'</span>,  <span class="text-slate-500">// From Figma</span>
+  styleUrl: <span class="text-green-400">'./login.component.scss'</span>       <span class="text-slate-500">// From Figma</span>
+})
+<span class="text-purple-400">export class</span> <span class="text-blue-400">LoginComponent</span> {
+  <span class="text-purple-400">private</span> fb = inject(FormBuilder);
+  <span class="text-purple-400">private</span> authService = inject(AuthService);
+  <span class="text-purple-400">private</span> router = inject(Router);
+
+  <span class="text-slate-500">// Form mit Validierung aus use-case spec</span>
+  loginForm = <span class="text-purple-400">this</span>.fb.group({
+    email: [<span class="text-green-400">''</span>, [Validators.required, Validators.email]],
+    password: [<span class="text-green-400">''</span>, [Validators.required, Validators.minLength(<span class="text-orange-400">8</span>)]]
+  });
+
+  <span class="text-slate-500">// State aus workflow definition</span>
+  state: <span class="text-green-400">'idle'</span> | <span class="text-green-400">'loading'</span> | <span class="text-green-400">'success'</span> | <span class="text-green-400">'error'</span> = <span class="text-green-400">'idle'</span>;
+  errorMessage = <span class="text-green-400">''</span>;
+
+  <span class="text-slate-500">// Error messages aus validation spec</span>
+  <span class="text-purple-400">readonly</span> errorMessages = {
+    email: <span class="text-green-400">'Gueltige E-Mail eingeben'</span>,
+    password: <span class="text-green-400">'Mind. 8 Zeichen'</span>
+  };
+
+  <span class="text-purple-400">async</span> onSubmit() {
+    <span class="text-purple-400">if</span> (<span class="text-purple-400">this</span>.loginForm.invalid) <span class="text-purple-400">return</span>;
+
+    <span class="text-purple-400">this</span>.state = <span class="text-green-400">'loading'</span>;
+
+    <span class="text-purple-400">try</span> {
+      <span class="text-slate-500">// API call aus endpoint spec</span>
+      <span class="text-purple-400">const</span> response = <span class="text-purple-400">await</span> <span class="text-purple-400">this</span>.authService.login(
+        <span class="text-purple-400">this</span>.loginForm.value <span class="text-purple-400">as</span> LoginRequest
+      );
+
+      <span class="text-purple-400">this</span>.state = <span class="text-green-400">'success'</span>;
+      <span class="text-purple-400">this</span>.router.navigate([<span class="text-green-400">'/dashboard'</span>]);  <span class="text-slate-500">// From state transition</span>
+
+    } <span class="text-purple-400">catch</span> (error) {
+      <span class="text-purple-400">this</span>.state = <span class="text-green-400">'error'</span>;
+      <span class="text-slate-500">// Error handling aus spec</span>
+      <span class="text-purple-400">this</span>.errorMessage = <span class="text-purple-400">this</span>.getErrorMessage(error.status);
+    }
+  }
+
+  <span class="text-purple-400">private</span> getErrorMessage(status: <span class="text-blue-400">number</span>): <span class="text-blue-400">string</span> {
+    <span class="text-purple-400">const</span> messages: Record<<span class="text-blue-400">number</span>, <span class="text-blue-400">string</span>> = {
+      <span class="text-orange-400">401</span>: <span class="text-green-400">'Falsche Anmeldedaten'</span>,
+      <span class="text-orange-400">429</span>: <span class="text-green-400">'Zu viele Versuche'</span>,
+      <span class="text-orange-400">500</span>: <span class="text-green-400">'Serverfehler, bitte spaeter versuchen'</span>
+    };
+    <span class="text-purple-400">return</span> messages[status] ?? <span class="text-green-400">'Unbekannter Fehler'</span>;
+  }
+}</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- MCP Server Implementation -->
+        <section id="mcp-server" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <span class="material-icons-outlined text-blue-400">dns</span>
+            MCP Server Implementierung
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-blue-500/20 mb-6">
+            <h4 class="font-semibold text-white mb-4">Server Konfiguration (package.json)</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-sm">
+              <pre class="text-slate-300">{
+  <span class="text-blue-400">"name"</span>: <span class="text-green-400">"figma-angular-mcp"</span>,
+  <span class="text-blue-400">"version"</span>: <span class="text-green-400">"1.0.0"</span>,
+  <span class="text-blue-400">"type"</span>: <span class="text-green-400">"module"</span>,
+  <span class="text-blue-400">"main"</span>: <span class="text-green-400">"dist/index.js"</span>,
+  <span class="text-blue-400">"scripts"</span>: {
+    <span class="text-blue-400">"build"</span>: <span class="text-green-400">"tsc"</span>,
+    <span class="text-blue-400">"start"</span>: <span class="text-green-400">"node dist/index.js"</span>
+  },
+  <span class="text-blue-400">"dependencies"</span>: {
+    <span class="text-blue-400">"@modelcontextprotocol/sdk"</span>: <span class="text-green-400">"^1.0.0"</span>,
+    <span class="text-blue-400">"cheerio"</span>: <span class="text-green-400">"^1.0.0"</span>,
+    <span class="text-blue-400">"gray-matter"</span>: <span class="text-green-400">"^4.0.3"</span>,
+    <span class="text-blue-400">"yaml"</span>: <span class="text-green-400">"^2.3.0"</span>,
+    <span class="text-blue-400">"handlebars"</span>: <span class="text-green-400">"^4.7.8"</span>
+  }
+}</pre>
+            </div>
+          </div>
+
+          <div class="glass rounded-2xl p-6 border border-slate-700/50">
+            <h4 class="font-semibold text-white mb-4">MCP Tools Definition</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-xs overflow-x-auto">
+              <pre class="text-slate-300"><span class="text-purple-400">import</span> { Server } <span class="text-purple-400">from</span> <span class="text-green-400">'@modelcontextprotocol/sdk/server/index.js'</span>;
+<span class="text-purple-400">import</span> { StdioServerTransport } <span class="text-purple-400">from</span> <span class="text-green-400">'@modelcontextprotocol/sdk/server/stdio.js'</span>;
+
+<span class="text-purple-400">const</span> server = <span class="text-purple-400">new</span> Server({
+  name: <span class="text-green-400">'figma-angular-mcp'</span>,
+  version: <span class="text-green-400">'1.0.0'</span>
+}, {
+  capabilities: {
+    tools: {},
+    resources: {}
+  }
+});
+
+<span class="text-slate-500">// Tool 1: Figma Export analysieren</span>
+server.setRequestHandler(<span class="text-green-400">'tools/list'</span>, <span class="text-purple-400">async</span> () => ({
+  tools: [
+    {
+      name: <span class="text-green-400">'analyze_figma_export'</span>,
+      description: <span class="text-green-400">'Analysiert Figma Make HTML Export und extrahiert Komponenten'</span>,
+      inputSchema: {
+        type: <span class="text-green-400">'object'</span>,
+        properties: {
+          path: { type: <span class="text-green-400">'string'</span>, description: <span class="text-green-400">'Pfad zum Export-Ordner'</span> },
+          extractStyles: { type: <span class="text-green-400">'boolean'</span>, default: <span class="text-orange-400">true</span> },
+          identifyPatterns: { type: <span class="text-green-400">'boolean'</span>, default: <span class="text-orange-400">true</span> }
+        },
+        required: [<span class="text-green-400">'path'</span>]
+      }
+    },
+    {
+      name: <span class="text-green-400">'load_business_context'</span>,
+      description: <span class="text-green-400">'Laedt Business-Spezifikationen aus Markdown-Dateien'</span>,
+      inputSchema: {
+        type: <span class="text-green-400">'object'</span>,
+        properties: {
+          specsPath: { type: <span class="text-green-400">'string'</span>, description: <span class="text-green-400">'Pfad zum specs/ Ordner'</span> },
+          useCases: {
+            type: <span class="text-green-400">'array'</span>,
+            items: { type: <span class="text-green-400">'string'</span> },
+            description: <span class="text-green-400">'Liste der zu ladenden Use Cases'</span>
+          }
+        },
+        required: [<span class="text-green-400">'specsPath'</span>]
+      }
+    },
+    {
+      name: <span class="text-green-400">'bind_component_to_usecase'</span>,
+      description: <span class="text-green-400">'Verbindet UI-Komponente mit Business Use Case und API'</span>,
+      inputSchema: {
+        type: <span class="text-green-400">'object'</span>,
+        properties: {
+          componentName: { type: <span class="text-green-400">'string'</span> },
+          useCaseFile: { type: <span class="text-green-400">'string'</span> },
+          apiEndpoint: { type: <span class="text-green-400">'string'</span> }
+        },
+        required: [<span class="text-green-400">'componentName'</span>, <span class="text-green-400">'useCaseFile'</span>]
+      }
+    },
+    {
+      name: <span class="text-green-400">'generate_angular_component'</span>,
+      description: <span class="text-green-400">'Generiert Angular Standalone Component mit Template und Service'</span>,
+      inputSchema: {
+        type: <span class="text-green-400">'object'</span>,
+        properties: {
+          componentName: { type: <span class="text-green-400">'string'</span> },
+          outputPath: { type: <span class="text-green-400">'string'</span> },
+          figmaHtml: { type: <span class="text-green-400">'string'</span> },
+          figmaCss: { type: <span class="text-green-400">'string'</span> },
+          businessContext: { type: <span class="text-green-400">'object'</span> },
+          includeTests: { type: <span class="text-green-400">'boolean'</span>, default: <span class="text-orange-400">true</span> }
+        },
+        required: [<span class="text-green-400">'componentName'</span>, <span class="text-green-400">'outputPath'</span>]
+      }
+    },
+    {
+      name: <span class="text-green-400">'generate_api_service'</span>,
+      description: <span class="text-green-400">'Generiert typisierte Angular HTTP Services aus OpenAPI'</span>,
+      inputSchema: {
+        type: <span class="text-green-400">'object'</span>,
+        properties: {
+          openApiPath: { type: <span class="text-green-400">'string'</span> },
+          outputPath: { type: <span class="text-green-400">'string'</span> },
+          serviceName: { type: <span class="text-green-400">'string'</span> }
+        },
+        required: [<span class="text-green-400">'openApiPath'</span>, <span class="text-green-400">'outputPath'</span>]
+      }
+    }
+  ]
+}));
+
+<span class="text-slate-500">// Start server</span>
+<span class="text-purple-400">const</span> transport = <span class="text-purple-400">new</span> StdioServerTransport();
+<span class="text-purple-400">await</span> server.connect(transport);</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- REST API Binding -->
+        <section id="rest-api" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <span class="material-icons-outlined text-purple-400">api</span>
+            REST API Binding
+          </h2>
+
+          <div class="glass rounded-2xl p-6 border border-purple-500/20 mb-6">
+            <p class="text-slate-300 mb-6">
+              Die REST API wird ueber OpenAPI/Swagger spezifiziert. Der MCP-Server generiert daraus
+              typisierte Angular Services mit allen Endpoints, Models und Error Handling.
+            </p>
+
+            <h4 class="font-semibold text-white mb-3">OpenAPI Beispiel (specs/api/openapi.yaml):</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-xs overflow-x-auto">
+              <pre class="text-slate-300"><span class="text-purple-400">openapi:</span> <span class="text-green-400">'3.0.3'</span>
+<span class="text-purple-400">info:</span>
+  <span class="text-purple-400">title:</span> <span class="text-green-400">'E-Commerce API'</span>
+  <span class="text-purple-400">version:</span> <span class="text-green-400">'1.0.0'</span>
+
+<span class="text-purple-400">servers:</span>
+  - <span class="text-purple-400">url:</span> <span class="text-green-400">'https://api.example.com/v1'</span>
+
+<span class="text-purple-400">paths:</span>
+  <span class="text-blue-400">/auth/login:</span>
+    <span class="text-purple-400">post:</span>
+      <span class="text-purple-400">operationId:</span> <span class="text-green-400">login</span>
+      <span class="text-purple-400">tags:</span> [<span class="text-green-400">Authentication</span>]
+      <span class="text-purple-400">summary:</span> <span class="text-green-400">'User login with email and password'</span>
+      <span class="text-purple-400">requestBody:</span>
+        <span class="text-purple-400">required:</span> <span class="text-orange-400">true</span>
+        <span class="text-purple-400">content:</span>
+          <span class="text-purple-400">application/json:</span>
+            <span class="text-purple-400">schema:</span>
+              <span class="text-purple-400">$ref:</span> <span class="text-green-400">'#/components/schemas/LoginRequest'</span>
+      <span class="text-purple-400">responses:</span>
+        <span class="text-green-400">'200':</span>
+          <span class="text-purple-400">description:</span> <span class="text-green-400">'Successful login'</span>
+          <span class="text-purple-400">content:</span>
+            <span class="text-purple-400">application/json:</span>
+              <span class="text-purple-400">schema:</span>
+                <span class="text-purple-400">$ref:</span> <span class="text-green-400">'#/components/schemas/AuthResponse'</span>
+        <span class="text-green-400">'401':</span>
+          <span class="text-purple-400">description:</span> <span class="text-green-400">'Invalid credentials'</span>
+        <span class="text-green-400">'429':</span>
+          <span class="text-purple-400">description:</span> <span class="text-green-400">'Too many requests'</span>
+
+  <span class="text-blue-400">/products:</span>
+    <span class="text-purple-400">get:</span>
+      <span class="text-purple-400">operationId:</span> <span class="text-green-400">listProducts</span>
+      <span class="text-purple-400">tags:</span> [<span class="text-green-400">Products</span>]
+      <span class="text-purple-400">parameters:</span>
+        - <span class="text-purple-400">name:</span> <span class="text-green-400">category</span>
+          <span class="text-purple-400">in:</span> <span class="text-green-400">query</span>
+          <span class="text-purple-400">schema:</span>
+            <span class="text-purple-400">type:</span> <span class="text-green-400">string</span>
+        - <span class="text-purple-400">name:</span> <span class="text-green-400">page</span>
+          <span class="text-purple-400">in:</span> <span class="text-green-400">query</span>
+          <span class="text-purple-400">schema:</span>
+            <span class="text-purple-400">type:</span> <span class="text-green-400">integer</span>
+            <span class="text-purple-400">default:</span> <span class="text-orange-400">1</span>
+
+<span class="text-purple-400">components:</span>
+  <span class="text-purple-400">schemas:</span>
+    <span class="text-blue-400">LoginRequest:</span>
+      <span class="text-purple-400">type:</span> <span class="text-green-400">object</span>
+      <span class="text-purple-400">required:</span> [<span class="text-green-400">email</span>, <span class="text-green-400">password</span>]
+      <span class="text-purple-400">properties:</span>
+        <span class="text-purple-400">email:</span>
+          <span class="text-purple-400">type:</span> <span class="text-green-400">string</span>
+          <span class="text-purple-400">format:</span> <span class="text-green-400">email</span>
+        <span class="text-purple-400">password:</span>
+          <span class="text-purple-400">type:</span> <span class="text-green-400">string</span>
+          <span class="text-purple-400">minLength:</span> <span class="text-orange-400">8</span>
+
+    <span class="text-blue-400">AuthResponse:</span>
+      <span class="text-purple-400">type:</span> <span class="text-green-400">object</span>
+      <span class="text-purple-400">properties:</span>
+        <span class="text-purple-400">token:</span>
+          <span class="text-purple-400">type:</span> <span class="text-green-400">string</span>
+        <span class="text-purple-400">user:</span>
+          <span class="text-purple-400">$ref:</span> <span class="text-green-400">'#/components/schemas/UserProfile'</span></pre>
+            </div>
+          </div>
+
+          <div class="glass rounded-2xl p-6 border border-slate-700/50">
+            <h4 class="font-semibold text-white mb-4">Generierter Angular Service:</h4>
+            <div class="code-block rounded-xl p-4 font-mono text-xs overflow-x-auto">
+              <pre class="text-slate-300"><span class="text-slate-500">// Generated from OpenAPI spec</span>
+<span class="text-purple-400">import</span> { Injectable, inject } <span class="text-purple-400">from</span> <span class="text-green-400">'@angular/core'</span>;
+<span class="text-purple-400">import</span> { HttpClient, HttpParams } <span class="text-purple-400">from</span> <span class="text-green-400">'@angular/common/http'</span>;
+<span class="text-purple-400">import</span> { Observable } <span class="text-purple-400">from</span> <span class="text-green-400">'rxjs'</span>;
+<span class="text-purple-400">import</span> { environment } <span class="text-purple-400">from</span> <span class="text-green-400">'@env/environment'</span>;
+
+<span class="text-slate-500">// Generated types</span>
+<span class="text-purple-400">export interface</span> LoginRequest {
+  email: <span class="text-blue-400">string</span>;
+  password: <span class="text-blue-400">string</span>;
+}
+
+<span class="text-purple-400">export interface</span> AuthResponse {
+  token: <span class="text-blue-400">string</span>;
+  user: UserProfile;
+}
+
+<span class="text-purple-400">export interface</span> UserProfile {
+  id: <span class="text-blue-400">string</span>;
+  email: <span class="text-blue-400">string</span>;
+  name: <span class="text-blue-400">string</span>;
+}
+
+<span class="text-blue-400">@Injectable</span>({ providedIn: <span class="text-green-400">'root'</span> })
+<span class="text-purple-400">export class</span> <span class="text-blue-400">AuthService</span> {
+  <span class="text-purple-400">private</span> http = inject(HttpClient);
+  <span class="text-purple-400">private</span> baseUrl = environment.apiUrl;
+
+  <span class="text-slate-500">/**
+   * User login with email and password
+   * POST /auth/login
+   */</span>
+  login(request: LoginRequest): Observable<AuthResponse> {
+    <span class="text-purple-400">return this</span>.http.post<AuthResponse>(
+      <span class="text-green-400">`${this.baseUrl}/auth/login`</span>,
+      request
+    );
+  }
+
+  <span class="text-slate-500">/**
+   * Promise-based login for async/await usage
+   */</span>
+  <span class="text-purple-400">async</span> loginAsync(request: LoginRequest): Promise<AuthResponse> {
+    <span class="text-purple-400">return</span> firstValueFrom(<span class="text-purple-400">this</span>.login(request));
+  }
+}</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Implementation Guide -->
+        <section id="implementation" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <span class="material-icons-outlined text-cyan-400">code</span>
+            Schritt-fuer-Schritt Implementierung
+          </h2>
+
+          <div class="space-y-6">
+            <!-- Step 1 -->
+            <div class="glass rounded-2xl p-6 border border-slate-700/50">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <span class="text-white font-bold">1</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-white mb-2">Figma Design vorbereiten</h3>
+                  <p class="text-slate-400 text-sm mb-4">
+                    Komponenten in Figma mit speziellen Prefixen benennen (@form/, @data/, @action/, @nav/).
+                    Export via Figma Make als HTML/CSS.
+                  </p>
+                  <div class="code-block rounded-lg p-3 text-xs">
+                    <pre class="text-slate-300"><span class="text-slate-500"># Figma Component Names:</span>
+@form/LoginForm
+@form/LoginForm/@input/Email
+@form/LoginForm/@input/Password
+@form/LoginForm/@action/SubmitButton
+@data/ErrorMessage</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="glass rounded-2xl p-6 border border-slate-700/50">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                  <span class="text-white font-bold">2</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-white mb-2">Business Specs erstellen</h3>
+                  <p class="text-slate-400 text-sm mb-4">
+                    Markdown-Dateien fuer jeden Use Case anlegen. API-Bindings, Validierungen
+                    und State-Transitions definieren.
+                  </p>
+                  <div class="code-block rounded-lg p-3 text-xs">
+                    <pre class="text-slate-300"><span class="text-slate-500"># specs/use-cases/ erstellen:</span>
+mkdir -p specs/{use-cases,api,validation,workflows,ui-mapping}
+
+<span class="text-slate-500"># Use Case Dateien:</span>
+touch specs/use-cases/user-authentication.md
+touch specs/use-cases/product-catalog.md
+touch specs/use-cases/shopping-cart.md
+<span class="text-slate-500"># ... weitere 20+ Dateien</span></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="glass rounded-2xl p-6 border border-slate-700/50">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                  <span class="text-white font-bold">3</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-white mb-2">MCP Server konfigurieren</h3>
+                  <p class="text-slate-400 text-sm mb-4">
+                    MCP-Server in Claude Desktop oder Claude Code registrieren.
+                  </p>
+                  <div class="code-block rounded-lg p-3 text-xs">
+                    <pre class="text-slate-300"><span class="text-slate-500">// claude_desktop_config.json</span>
+{
+  <span class="text-blue-400">"mcpServers"</span>: {
+    <span class="text-blue-400">"figma-angular"</span>: {
+      <span class="text-blue-400">"command"</span>: <span class="text-green-400">"node"</span>,
+      <span class="text-blue-400">"args"</span>: [<span class="text-green-400">"path/to/figma-angular-mcp/dist/index.js"</span>],
+      <span class="text-blue-400">"env"</span>: {
+        <span class="text-blue-400">"FIGMA_EXPORT_PATH"</span>: <span class="text-green-400">"./figma-export"</span>,
+        <span class="text-blue-400">"SPECS_PATH"</span>: <span class="text-green-400">"./specs"</span>,
+        <span class="text-blue-400">"OUTPUT_PATH"</span>: <span class="text-green-400">"./angular-app"</span>
+      }
+    }
+  }
+}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="glass rounded-2xl p-6 border border-slate-700/50">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center flex-shrink-0">
+                  <span class="text-white font-bold">4</span>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-white mb-2">Pipeline ausfuehren</h3>
+                  <p class="text-slate-400 text-sm mb-4">
+                    Claude mit dem MCP-Server die Transformation durchfuehren lassen.
+                  </p>
+                  <div class="code-block rounded-lg p-3 text-xs">
+                    <pre class="text-slate-300"><span class="text-slate-500"># Prompt an Claude:</span>
+"Analysiere den Figma-Export in ./figma-export und
+generiere eine Angular-App basierend auf den
+Business-Spezifikationen in ./specs.
+
+Binde die REST API aus specs/api/openapi.yaml an
+und erstelle Services fuer alle Endpoints.
+
+Output nach ./angular-app mit Standalone Components."</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Summary / Key Takeaways -->
+        <section class="scroll-mt-24 pb-16">
+          <div class="glass rounded-2xl p-8 border border-slate-700/50 bg-gradient-to-br from-blue-500/5 to-purple-500/5">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <span class="material-icons-outlined text-blue-400">lightbulb</span>
+              Zusammenfassung
+            </h2>
+
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <h4 class="font-semibold text-white mb-3">Was diese Pipeline ermoeglicht:</h4>
+                <ul class="space-y-2 text-sm text-slate-300">
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-green-400 text-base mt-0.5">check_circle</span>
+                    <span>Design-to-Code ohne manuelle Uebertragung</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-green-400 text-base mt-0.5">check_circle</span>
+                    <span>Business-Logik aus strukturierten Markdown-Specs</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-green-400 text-base mt-0.5">check_circle</span>
+                    <span>Typisierte Services aus OpenAPI-Definitionen</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-green-400 text-base mt-0.5">check_circle</span>
+                    <span>Production-ready Angular mit Best Practices</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 class="font-semibold text-white mb-3">Voraussetzungen:</h4>
+                <ul class="space-y-2 text-sm text-slate-300">
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-blue-400 text-base mt-0.5">arrow_right</span>
+                    <span>Figma Design mit benannten Komponenten</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-blue-400 text-base mt-0.5">arrow_right</span>
+                    <span>Vollstaendige Business-Spezifikationen (Markdown)</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-blue-400 text-base mt-0.5">arrow_right</span>
+                    <span>OpenAPI/Swagger API-Definition</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-icons-outlined text-blue-400 text-base mt-0.5">arrow_right</span>
+                    <span>MCP-faehiger Claude Client</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-700/50">
+              <p class="text-sm text-slate-400">
+                <strong class="text-white">Naechster Schritt:</strong>
+                Erstelle den MCP-Server als npm-Paket und teste die Pipeline mit einem einfachen
+                Figma-Prototyp (z.B. Login-Seite).
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="ml-64 border-t border-slate-700/50 py-6 px-8">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <p class="text-sm text-slate-500">
+        Figma-to-Angular MCP Pipeline Konzept
+      </p>
+      <p class="text-sm text-slate-500">
+        chevp Development
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
