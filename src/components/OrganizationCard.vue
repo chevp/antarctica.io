@@ -1,5 +1,31 @@
 <template>
+  <!-- Internal router link -->
+  <router-link
+    v-if="routerLink"
+    :to="routerLink"
+    class="card glass rounded-xl p-6 border border-slate-700/50 block cursor-pointer hover:border-slate-600 transition-colors"
+  >
+    <div class="flex items-start justify-between mb-4">
+      <div
+        class="w-16 h-16 rounded-xl flex items-center justify-center"
+        :class="gradientClass"
+      >
+        <span class="material-symbols-outlined text-white text-3xl">{{ icon }}</span>
+      </div>
+      <span class="material-symbols-outlined" :class="arrowColorClass">arrow_forward</span>
+    </div>
+    <h3 class="text-xl font-bold mb-2">{{ title }}</h3>
+    <p class="text-sm text-slate-400 mb-4">{{ description }}</p>
+    <div class="flex items-center gap-4 text-xs text-slate-500">
+      <span>{{ projectCount }} Projects</span>
+      <span>•</span>
+      <span>{{ status }}</span>
+    </div>
+  </router-link>
+
+  <!-- External link -->
   <a
+    v-else
     :href="link"
     target="_blank"
     rel="noopener noreferrer"
@@ -55,6 +81,10 @@ export default {
     link: {
       type: String,
       default: '#'
+    },
+    routerLink: {
+      type: String,
+      default: null
     }
   },
   computed: {

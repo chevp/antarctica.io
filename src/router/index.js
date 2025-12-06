@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import OverviewPage from '../pages/OverviewPage.vue'
 import DashboardPage from '../pages/DashboardPage.vue'
+import DocsPage from '../pages/DocsPage.vue'
 
 const routes = [
   {
@@ -12,6 +13,17 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: DashboardPage
+  },
+  {
+    path: '/docs',
+    name: 'Docs',
+    component: DocsPage
+  },
+  {
+    path: '/docs/:docId',
+    name: 'DocDetail',
+    component: DocsPage,
+    props: true
   }
 ]
 

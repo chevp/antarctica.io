@@ -23,6 +23,7 @@
         :project-count="org.projectCount"
         :status="org.status"
         :link="org.link"
+        :router-link="org.routerLink"
       />
     </div>
   </div>
@@ -50,14 +51,14 @@ export default {
           link: 'https://chevp.github.io/ice-station.io/?id=frostwind-outpost'
         },
         {
-          id: 'cryo-platform',
-          title: 'Cryo Platform',
-          description: 'Cloud-native game development platform',
-          icon: 'cloud',
+          id: 'mcp-pipeline',
+          title: 'MCP Pipeline',
+          description: 'Design-to-code pipeline documentation',
+          icon: 'account_tree',
           color: 'purple',
-          projectCount: 8,
-          status: 'Active',
-          link: 'https://chevp.github.io/ice-station.io/?id=cryo-platform'
+          projectCount: 1,
+          status: 'Documentation',
+          routerLink: '/docs'
         },
         {
           id: 'demo-apps',
