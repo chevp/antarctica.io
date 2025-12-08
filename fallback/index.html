@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synth Cluster Editor - Fallback</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            arctic: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+    }
+
+    .gradient-amber {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .pulse-icon {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .info-card {
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/50">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-icons text-arctic-400">hub</span>
+        <span class="font-semibold text-lg">Synth Cluster Editor</span>
+        <span class="text-slate-500 text-sm ml-2">Fallback Mode</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-xs text-slate-500">Antarctica.io</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-16 flex-1 flex items-center justify-center">
+    <div class="max-w-2xl mx-auto text-center">
+
+      <!-- Warning Icon -->
+      <div class="w-24 h-24 rounded-full gradient-amber flex items-center justify-center mx-auto mb-8 pulse-icon">
+        <span class="material-icons text-white text-5xl">cloud_off</span>
+      </div>
+
+      <!-- Fallback Message -->
+      <h1 class="text-4xl font-extrabold mb-4">
+        <span class="gradient-text">Fallback Mode</span>
+      </h1>
+
+      <p class="text-lg text-slate-400 mb-8">
+        The Synth Cluster Editor is currently running in fallback mode.
+        Local pages could not be loaded and the remote connection is unavailable.
+      </p>
+
+      <!-- Status Card -->
+      <div class="glass rounded-2xl p-6 mb-8 text-left">
+        <div class="flex items-start gap-4">
+          <div class="w-16 h-16 rounded-xl gradient-bg flex items-center justify-center flex-shrink-0">
+            <span class="material-icons text-white text-2xl">info</span>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-xl font-bold mb-2">What does this mean?</h2>
+            <p class="text-slate-400 text-sm mb-3">
+              The application couldn't load the UI pages from local storage or the remote server.
+              This may happen due to network issues, missing files, or during initial setup.
+            </p>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-amber-400 bg-amber-500/20 px-2 py-1 rounded border border-amber-500/30">Limited Functionality</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="info-card glass rounded-xl p-4">
+          <span class="material-icons text-amber-400 text-2xl mb-2">folder_off</span>
+          <p class="text-sm font-medium">Local Pages</p>
+          <p class="text-xs text-slate-500">Not Available</p>
+        </div>
+        <div class="info-card glass rounded-xl p-4">
+          <span class="material-icons text-amber-400 text-2xl mb-2">wifi_off</span>
+          <p class="text-sm font-medium">Remote Server</p>
+          <p class="text-xs text-slate-500">Unreachable</p>
+        </div>
+        <div class="info-card glass rounded-xl p-4">
+          <span class="material-icons text-green-400 text-2xl mb-2">check_circle</span>
+          <p class="text-sm font-medium">Application</p>
+          <p class="text-xs text-slate-500">Running</p>
+        </div>
+      </div>
+
+      <!-- Troubleshooting Section -->
+      <div class="glass rounded-xl p-6 mb-8 text-left">
+        <h3 class="font-semibold mb-4 flex items-center gap-2">
+          <span class="material-icons text-arctic-400">build</span>
+          Troubleshooting Steps
+        </h3>
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <span class="material-icons text-slate-500 text-sm mt-0.5">chevron_right</span>
+            <div>
+              <p class="text-sm text-slate-300">Check your internet connection</p>
+              <p class="text-xs text-slate-500">Ensure you have network access to load remote pages</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-icons text-slate-500 text-sm mt-0.5">chevron_right</span>
+            <div>
+              <p class="text-sm text-slate-300">Restart the application</p>
+              <p class="text-xs text-slate-500">Close and reopen Synth Cluster Editor</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-icons text-slate-500 text-sm mt-0.5">chevron_right</span>
+            <div>
+              <p class="text-sm text-slate-300">Rebuild the project</p>
+              <p class="text-xs text-slate-500">Run <code class="bg-slate-800 px-1 rounded text-xs">npm run build</code> to regenerate local pages</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="material-icons text-slate-500 text-sm mt-0.5">chevron_right</span>
+            <div>
+              <p class="text-sm text-slate-300">Check the console for errors</p>
+              <p class="text-xs text-slate-500">Open DevTools (Ctrl+Shift+I) to see detailed error messages</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technical Info -->
+      <div class="glass rounded-xl p-4 mb-8">
+        <p class="text-xs text-slate-500 mb-2">Remote Pages URL</p>
+        <div class="flex items-center gap-2 bg-slate-900/50 rounded-lg p-3 font-mono text-sm">
+          <span class="text-arctic-400 material-icons text-base">link</span>
+          <code class="text-slate-300 text-xs">https://chevp.github.io/antarctica.io/</code>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <button onclick="location.reload()"
+           class="gradient-bg px-8 py-4 rounded-xl font-semibold text-white flex items-center gap-2 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/25">
+          <span class="material-icons">refresh</span>
+          Retry Connection
+        </button>
+        <a href="https://github.com/chevp/synth-cluster-editor" target="_blank"
+           class="glass px-6 py-4 rounded-xl font-medium text-slate-300 flex items-center gap-2 transition-all hover:bg-white/10">
+          <span class="material-icons">code</span>
+          View on GitHub
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/50">
+    <div class="container mx-auto px-6 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-slate-500 text-sm">
+          <span class="material-icons text-arctic-400 text-base">hub</span>
+          <span>Synth Cluster Editor</span>
+          <span class="text-slate-700">·</span>
+          <span>Antarctica.io</span>
+        </div>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="https://chevp.github.io/antarctica.io/" class="text-slate-400 hover:text-slate-100 transition-colors">Antarctica.io</a>
+          <a href="https://github.com/chevp" target="_blank" class="text-slate-400 hover:text-slate-100 transition-colors">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
