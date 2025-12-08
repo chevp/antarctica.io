@@ -7,6 +7,7 @@ import JobApplicationPage from '../pages/JobApplicationPage.vue'
 import JobApplicationPageV2 from '../pages/JobApplicationPageV2.vue'
 import DocsPageV2 from '../pages/DocsPageV2.vue'
 import DocsPageV3 from '../pages/DocsPageV3.vue'
+import FallbackPage from '../pages/FallbackPage.vue'
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
     path: '/docs-v3',
     name: 'DocsV3',
     component: DocsPageV3
+  },
+  {
+    path: '/fallback',
+    name: 'Fallback',
+    component: FallbackPage
   }
 ]
 
