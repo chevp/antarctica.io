@@ -51,6 +51,16 @@ export default {
           link: 'https://chevp.github.io/ice-station.io/?id=frostwind-outpost'
         },
         {
+          id: 'projects',
+          title: 'Projects',
+          description: 'Explanation pages for private projects',
+          icon: 'folder_special',
+          color: 'green',
+          projectCount: 196,
+          status: 'Private',
+          routerLink: '/projects'
+        },
+        {
           id: 'mcp-pipeline',
           title: 'MCP Pipeline',
           description: 'Design-to-code pipeline documentation',
