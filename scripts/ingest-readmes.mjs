@@ -90,6 +90,17 @@ function parseReadme(path) {
     }
   }
   overview = overview.replace(/\s+/g, ' ').trim()
+  overview = overview.replace(/\*\*/g, '').replace(/`/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim()
+  overview = overview.replace(/^[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]+\s*/u, '').trim()
+  overview = overview.replace(/[\u{FE00}-\u{FE0F}\u{200D}]/gu, '').trim()
+  // Drop leading "Here's…", "Here is…", "Above…", "Below…", "This setup…" sentences
+  // that only make sense with surrounding README context.
+  const contextual = /^(here's|here is|above|below|this setup|this (document|repo|repository|readme|guide) )/i
+  while (contextual.test(overview)) {
+    const next = overview.indexOf('. ')
+    if (next < 0 || next > overview.length - 10) { overview = ''; break }
+    overview = overview.slice(next + 2).trim()
+  }
   if (overview.length > 400) overview = overview.slice(0, 397).trimEnd() + '…'
 
   // --- top-level bullets (first bullet block we find)
@@ -100,8 +111,11 @@ function parseReadme(path) {
     if (m) {
       inList = true
       let t = m[1].replace(/\*\*/g, '').replace(/`/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim()
+      // strip leading emojis/checkboxes from bullet text
+      t = t.replace(/^\[[\sx]\]\s*/i, '').trim()
+      t = t.replace(/^[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}✅❌✓✗]+\s*/u, '').trim()
       if (t.length > 180) t = t.slice(0, 177).trimEnd() + '…'
-      if (t && !/^https?:/.test(t)) bullets.push(t)
+      if (t && t.length >= 8 && !/^https?:/.test(t)) bullets.push(t)
       if (bullets.length >= 8) break
     } else if (inList && l.trim() === '') {
       // continue list across blank lines (only if next non-blank is also a bullet)
@@ -116,7 +130,13 @@ function parseReadme(path) {
     const m = lines[j].match(/^##\s+(.+?)\s*#*\s*$/)
     if (!m) continue
     let h = m[1].replace(/\*\*/g, '').replace(/`/g, '').trim()
+    // strip leading emojis, pictographs, variation selectors, and combining marks
+    h = h.replace(/^[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]+\s*/u, '').trim()
+    h = h.replace(/[\u{FE00}-\u{FE0F}\u{200D}]/gu, '').trim()
+    // drop leading "Bonus:", "Note:" etc qualifiers attached to headings
+    h = h.replace(/^(bonus|note|extra|appendix)\s*[:–—-]\s*/i, '').trim()
     if (h.length > 60) h = h.slice(0, 57).trimEnd() + '…'
+    if (!h) continue
     // skip common boilerplate
     if (/^(license|contributing|contributors|acknowledg|installation|install|getting started|prerequisites|requirements|table of contents|toc)$/i.test(h)) continue
     // collect first paragraph
@@ -136,6 +156,15 @@ function parseReadme(path) {
       if (body.length > 240) break
     }
     body = body.replace(/\*\*/g, '').replace(/`/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim()
+    // strip leading emojis and variation selectors from body too
+    body = body.replace(/^[\p{Extended_Pictographic}\p{Emoji_Presentation}\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]+\s*/u, '').trim()
+    body = body.replace(/[\u{FE00}-\u{FE0F}\u{200D}]/gu, '').trim()
+    // skip bodies that are obvious table fragments or heading-only
+    if (/^\|.*\|/.test(body)) continue
+    if (body.length < 20) continue
+    // skip bodies that read like another heading (short, no sentence punctuation,
+    // Title Case or all caps — usually just the next sub-heading)
+    if (body.length < 50 && !/[.!?]$/.test(body) && /^[A-Z]/.test(body) && body.split(/\s+/).length <= 5) continue
     if (body.length > 240) body = body.slice(0, 237).trimEnd() + '…'
     if (h && body) sections.push({ h, b: body })
     if (sections.length >= 6) break
