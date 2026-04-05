@@ -15,7 +15,7 @@
             <h1 class="text-3xl md:text-4xl font-bold break-words">
               <span class="bg-clip-text text-transparent" :class="palette.gradHeroText">{{ project.name }}</span>
             </h1>
-            <p class="text-slate-400 mt-1">{{ project.summary || 'A private project inside the chevp ecosystem.' }}</p>
+            <p class="text-slate-400 mt-1">{{ project.overview || project.summary || 'A private project inside the chevp ecosystem.' }}</p>
           </div>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
@@ -55,6 +55,19 @@ export default {
   props: { project: Object, palette: Object, state: Object, icon: String, seed: Number },
   computed: {
     tiles() {
+      const sections = this.project.sections || []
+      const bullets = this.project.bullets || []
+      let chosen = null
+      if (sections.length >= 3) {
+        chosen = sections.slice(0, 6).map(s => ({ h: s.h, b: s.b }))
+      } else if (bullets.length >= 3) {
+        chosen = bullets.slice(0, 6).map(b => {
+          const parts = b.split(/\s[:–—-]\s/)
+          if (parts.length >= 2) return { h: parts[0].slice(0, 40), b: parts.slice(1).join(' - ') }
+          return { h: b.slice(0, 40) + (b.length > 40 ? '…' : ''), b }
+        })
+      }
+      if (chosen) return chosen.map((t, i) => ({ ...t, icon: pick(SECTION_ICONS, this.seed, i * 23 + 2) }))
       const pool = [
         { h: 'Core API', b: 'Typed interfaces with schema-first contracts.' },
         { h: 'Runtime', b: 'Resource-aware scheduler and lifecycle manager.' },
@@ -67,8 +80,8 @@ export default {
         { h: 'SDK', b: 'Typed client for the most common integrations.' },
         { h: 'Templates', b: 'Scaffolds for the common starting points.' }
       ]
-      const chosen = [0,1,2,3,4,5].map(i => pick(pool, this.seed, i*19+7))
-      return chosen.map((t,i) => ({ ...t, icon: pick(SECTION_ICONS, this.seed, i*23+2) }))
+      const fallback = [0,1,2,3,4,5].map(i => pick(pool, this.seed, i*19+7))
+      return fallback.map((t,i) => ({ ...t, icon: pick(SECTION_ICONS, this.seed, i*23+2) }))
     }
   }
 }

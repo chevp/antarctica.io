@@ -10,7 +10,7 @@
         <h1 class="text-5xl font-bold mb-6 leading-tight break-words">
           <span class="bg-clip-text text-transparent" :class="palette.gradHeroText">{{ project.name }}</span>
         </h1>
-        <p class="text-slate-400 text-lg mb-6">{{ project.summary || 'A private project inside the chevp ecosystem.' }}</p>
+        <p class="text-slate-400 text-lg mb-6">{{ project.overview || project.summary || 'A private project inside the chevp ecosystem.' }}</p>
         <div class="flex flex-wrap gap-2">
           <span v-for="c in project.categories" :key="c" class="text-xs px-2.5 py-1 rounded" :class="palette.badge">{{ c }}</span>
         </div>
@@ -52,6 +52,16 @@ export default {
   props: { project: Object, palette: Object, state: Object, icon: String, seed: Number },
   computed: {
     features() {
+      const bullets = this.project.bullets || []
+      if (bullets.length >= 3) {
+        return bullets.slice(0, 6).map(b => {
+          const parts = b.split(/\s[:–—-]\s/)
+          if (parts.length >= 2) return { h: parts[0].slice(0, 40), b: parts.slice(1).join(' - ') }
+          return { h: b.slice(0, 40) + (b.length > 40 ? '…' : ''), b }
+        })
+      }
+      const sections = this.project.sections || []
+      if (sections.length >= 3) return sections.slice(0, 6)
       const pool = [
         { h: 'Headless core', b: 'Business logic independent of any UI or transport.' },
         { h: 'Pluggable adapters', b: 'Swap storage, queues, or renderers without touching the core.' },

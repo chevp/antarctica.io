@@ -35,9 +35,10 @@
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
       <div class="lg:col-span-2 glass rounded-xl p-6 border border-slate-700/50">
         <h2 class="text-sm uppercase tracking-wider font-semibold mb-3" :class="palette.accentText">Summary</h2>
-        <p class="text-slate-300 leading-relaxed">{{ project.summary || 'A private project inside the chevp ecosystem.' }}</p>
+        <p class="text-slate-300 leading-relaxed">{{ project.overview || project.summary || 'A private project inside the chevp ecosystem.' }}</p>
         <div class="mt-5 flex flex-wrap gap-2">
           <span v-for="c in project.categories" :key="c" class="text-xs px-2.5 py-1 rounded" :class="palette.badge">{{ c }}</span>
+          <span v-for="t in (project.techStack || [])" :key="'t-'+t" class="text-xs px-2.5 py-1 rounded bg-slate-800/60 text-slate-300 border border-slate-700/50">{{ t }}</span>
         </div>
       </div>
       <div class="glass rounded-xl p-6 border border-slate-700/50">
@@ -81,15 +82,27 @@ export default {
   props: { project: Object, palette: Object, state: Object, icon: String, seed: Number },
   computed: {
     stats() {
-      const mod = (salt, max) => ((this.seed + salt) % max)
+      const bullets = (this.project.bullets || []).length
+      const stack = (this.project.techStack || []).length
+      const sections = (this.project.sections || []).length
       return [
         { label: 'Categories', value: this.project.categories.length, sub: 'domain tags' },
-        { label: 'Modules',    value: 3 + mod(7, 9),  sub: 'estimated' },
-        { label: 'Progress',   value: (20 + mod(13,70)) + '%', sub: 'rough' },
-        { label: 'State',      value: this.state.label, sub: 'current' }
+        { label: 'Tech',       value: stack || '—',                  sub: 'detected' },
+        { label: 'Features',   value: bullets || '—',                sub: 'README bullets' },
+        { label: 'Sections',   value: sections || '—',               sub: 'README chapters' }
       ]
     },
     streams() {
+      const sections = this.project.sections || []
+      if (sections.length >= 2) return sections.slice(0, 4).map(s => ({ h: s.h, b: s.b }))
+      const bullets = this.project.bullets || []
+      if (bullets.length >= 2) {
+        return bullets.slice(0, 4).map(b => {
+          const parts = b.split(/\s[:–—-]\s/)
+          if (parts.length >= 2) return { h: parts[0].slice(0, 32), b: parts.slice(1).join(' - ') }
+          return { h: b.slice(0, 32) + (b.length > 32 ? '…' : ''), b: '' }
+        })
+      }
       const pool = [
         { h: 'Core',        b: 'Domain logic and invariants' },
         { h: 'Runtime',     b: 'Scheduling and lifecycle' },
@@ -101,6 +114,14 @@ export default {
       return [0,1,2,3].map(i => pick(pool, this.seed, i*37+11))
     },
     progress() {
+      const stack = this.project.techStack || []
+      if (stack.length >= 2) {
+        // one bar per tech, fill proportional to order (first = most prominent)
+        return stack.slice(0, 4).map((t, i) => ({
+          h: t,
+          pct: Math.max(25, 100 - i * 18)
+        }))
+      }
       const pool = [
         { h: 'Specification' }, { h: 'Core engine' }, { h: 'Adapters' },
         { h: 'Documentation' }, { h: 'Tests' }, { h: 'Examples' },

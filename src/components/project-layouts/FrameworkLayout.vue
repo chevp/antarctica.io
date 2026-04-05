@@ -16,7 +16,7 @@
         <span class="bg-clip-text text-transparent" :class="palette.gradHeroText">{{ project.name }}</span>
       </h1>
       <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-        {{ project.summary || 'A private project inside the chevp ecosystem.' }}
+        {{ project.overview || project.summary || 'A private project inside the chevp ecosystem.' }}
       </p>
     </section>
 
@@ -69,6 +69,10 @@ export default {
   props: { project: Object, palette: Object, state: Object, icon: String, seed: Number },
   computed: {
     scopes() {
+      const bullets = this.project.bullets || []
+      if (bullets.length >= 3) {
+        return bullets.slice(0, 3).map(b => ({ title: b.split(/[:–—-]\s/)[0].slice(0, 28), body: b }))
+      }
       const pool = [
         { title: 'Boundaries', body: 'Clear surface area, well-defined inputs and outputs, no hidden coupling.' },
         { title: 'Composability', body: 'Small pieces that combine into larger workflows without rewrite.' },
@@ -80,6 +84,10 @@ export default {
       return [pick(pool, this.seed, 0), pick(pool, this.seed, 1), pick(pool, this.seed, 2)]
     },
     principles() {
+      const sections = this.project.sections || []
+      if (sections.length >= 2) {
+        return sections.slice(0, 4).map(s => ({ h: s.h, b: s.b }))
+      }
       const pool = [
         { h: 'Small, verifiable steps', b: 'Every change is reviewable in isolation.' },
         { h: 'Data is a contract', b: 'Schemas are versioned; breaking change is explicit.' },

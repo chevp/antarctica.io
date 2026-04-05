@@ -117,7 +117,9 @@ const LAYOUTS = ['framework', 'split', 'timeline', 'grid', 'architecture', 'dash
 
 export function themeFor(project) {
   const h = hash(project.id)
-  const layout = LAYOUTS[h % LAYOUTS.length]
+  const layout = (project.layout && LAYOUTS.includes(project.layout))
+    ? project.layout
+    : LAYOUTS[h % LAYOUTS.length]
   const palette = PALETTES[Math.floor(h / 7) % PALETTES.length]
   const state = STATE_STYLES[project.state] || STATE_STYLES['in-progress']
   const icon = CATEGORY_ICONS[project.categories?.[0]] || 'folder'

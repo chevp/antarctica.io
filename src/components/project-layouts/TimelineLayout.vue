@@ -10,7 +10,7 @@
       <h1 class="text-4xl md:text-5xl font-bold mb-3 break-words">
         <span class="bg-clip-text text-transparent" :class="palette.gradHeroText">{{ project.name }}</span>
       </h1>
-      <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-4">{{ project.summary || 'A private project inside the chevp ecosystem.' }}</p>
+      <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-4">{{ project.overview || project.summary || 'A private project inside the chevp ecosystem.' }}</p>
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs" :class="state.pill">
         <span class="w-1.5 h-1.5 rounded-full" :class="state.dot"></span>
         <span class="font-semibold uppercase tracking-wider">{{ state.label }}</span>
@@ -57,6 +57,14 @@ export default {
   props: { project: Object, palette: Object, state: Object, icon: String, seed: Number },
   computed: {
     milestones() {
+      const sections = this.project.sections || []
+      if (sections.length >= 3) {
+        return sections.slice(0, 5).map((s, i) => ({
+          phase: 'Step ' + String(i + 1).padStart(2, '0'),
+          title: s.h,
+          body: s.b
+        }))
+      }
       const pool = [
         { phase: 'Phase 01', title: 'Problem framing', body: 'Identify who the user is and the job the project does for them.' },
         { phase: 'Phase 02', title: 'Prototype', body: 'Smallest possible thing that proves the core idea.' },

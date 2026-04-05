@@ -14,7 +14,7 @@
       <h1 class="text-4xl md:text-5xl font-bold mb-4 break-words">
         <span class="bg-clip-text text-transparent" :class="palette.gradHeroText">{{ project.name }}</span>
       </h1>
-      <p class="text-slate-400 text-lg max-w-2xl mx-auto">{{ project.summary || 'A private project inside the chevp ecosystem.' }}</p>
+      <p class="text-slate-400 text-lg max-w-2xl mx-auto">{{ project.overview || project.summary || 'A private project inside the chevp ecosystem.' }}</p>
     </section>
 
     <!-- Architecture diagram (ASCII-style layered stack) -->
@@ -74,6 +74,11 @@ export default {
   props: { project: Object, palette: Object, state: Object, icon: String, seed: Number },
   computed: {
     layers() {
+      const sections = this.project.sections || []
+      if (sections.length >= 4) {
+        const icons = [0,1,2,3].map(i => pick(SECTION_ICONS, this.seed, i*29+5))
+        return sections.slice(0, 4).map((s, i) => ({ h: s.h, b: s.b, icon: icons[i] }))
+      }
       const pool = [
         { h: 'Presentation', b: 'UI and user-facing surfaces.' },
         { h: 'Application', b: 'Use-cases, workflows, orchestration.' },
@@ -88,6 +93,14 @@ export default {
       return [0,1,2,3].map((i,idx) => ({ ...pick(pool, this.seed, i*11+2), icon: icons[idx] }))
     },
     decisions() {
+      const bullets = this.project.bullets || []
+      if (bullets.length >= 3) {
+        return bullets.slice(0, 4).map(b => {
+          const parts = b.split(/\s[:–—-]\s/)
+          if (parts.length >= 2) return { h: parts[0].slice(0, 48), b: parts.slice(1).join(' - ') }
+          return { h: b.slice(0, 48) + (b.length > 48 ? '…' : ''), b }
+        })
+      }
       const pool = [
         { h: 'Event-sourced core', b: 'State is derived from an immutable event log.' },
         { h: 'Schema-first contracts', b: 'Interfaces are defined before implementation.' },

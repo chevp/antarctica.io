@@ -46,6 +46,7 @@
 
 <script>
 import { projects } from '../data/projects.js'
+import { enrichments } from '../data/projects.generated.js'
 import { themeFor } from '../data/projectTheme.js'
 import FrameworkLayout from '../components/project-layouts/FrameworkLayout.vue'
 import SplitLayout from '../components/project-layouts/SplitLayout.vue'
@@ -67,7 +68,12 @@ export default {
   name: 'ProjectDetailPage',
   props: { id: { type: String, required: true } },
   computed: {
-    project() { return projects.find(p => p.id === this.id) },
+    project() {
+      const base = projects.find(p => p.id === this.id)
+      if (!base) return null
+      const extra = enrichments[this.id] || {}
+      return { ...base, ...extra }
+    },
     theme() { return this.project ? themeFor(this.project) : null },
     layoutComponent() { return this.theme ? LAYOUTS[this.theme.layout] : null }
   }
