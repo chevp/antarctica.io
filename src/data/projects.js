@@ -123,7 +123,7 @@ export const projects = [
   { id: 'nuna-games', name: 'nuna-games', state: 'in-progress', org: 'projects', categories: ["Gaming"], summary: 'Game content and scene definitions for the Synth runtime.', overview: '' },
   { id: 'nuna-kit-system', name: 'nuna-kit-system', state: 'in-progress', org: 'projects', categories: ["Development"], summary: 'Standardized contract and loader for game content kits', overview: '' },
   { id: 'nuna-mcp', name: 'nuna-mcp', state: 'archived', org: 'projects', categories: ["Development"], summary: 'Nuna MCP Server - Code documentation for LLMs and AI code editors', overview: '' },
-  { id: 'nuna-playground-cpp', name: 'nuna-playground-cpp', state: 'in-progress', org: 'projects', categories: ["Gaming"], summary: 'Organisation: projects', overview: '' },
+  { id: 'nuna-playground', name: 'nuna-playground', state: 'in-progress', org: 'projects', categories: ["Gaming"], summary: 'Organisation: projects', overview: '' },
   { id: 'nuna-plugin-coregfx', name: 'nuna-plugin-coregfx', state: 'in-progress', org: 'projects', categories: ["Graphics"], summary: 'Nuna plugin template with coregfx graphics library integration', overview: '' },
   { id: 'nuna-plugin-coregfx-desktop', name: 'nuna-plugin-coregfx-desktop', state: 'in-progress', org: 'projects', categories: ["Graphics"], summary: 'Desktop renderer plugin for nuna-plugin-coregfx (Windows/Linux)', overview: '' },
   { id: 'nuna-plugin-sdk', name: 'nuna-plugin-sdk', state: 'in-progress', org: 'projects', categories: ["Development"], summary: 'Nuna Plugin SDK', overview: '' },
