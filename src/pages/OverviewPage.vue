@@ -7,7 +7,7 @@
 
     <!-- Page Header -->
     <div class="mb-8">
-      <h2 class="text-3xl font-bold mb-2">Select a Group</h2>
+      <h2 class="text-3xl font-bold mb-2">Peter</h2>
       <p class="text-slate-400">Choose your group to view projects</p>
     </div>
 
